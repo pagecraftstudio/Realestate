@@ -1,0 +1,43 @@
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ─── Build outputs ────────────────────────────────────────────────────────────
+dist/
+.next/
+out/
+
+# ─── Environment files (NEVER commit secrets) ─────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.prod.example
+tests/.env.test.local
+
+# ─── Prisma ───────────────────────────────────────────────────────────────────
+# Keep migrations/ in git — they are the source of truth for schema history
+apps/api/prisma/migrations/*.sql.bak
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Test / coverage ──────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── OS & editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+# Keep docker-compose files in git
+# But not local overrides
+docker-compose.override.yml
+
+# ─── Supabase CLI ─────────────────────────────────────────────────────────────
+supabase/.temp/
