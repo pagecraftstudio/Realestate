@@ -307,7 +307,7 @@ model Organization {
   id          String    @id @default(cuid())
   name        String
   slug        String    @unique
-  plan        Plan      @default(TRIAL)
+  plan        Plan      @default(FREE)
   status      OrgStatus @default(TRIAL)
   logoUrl     String?
   website     String?

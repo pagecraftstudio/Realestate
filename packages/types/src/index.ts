@@ -49,7 +49,7 @@ export interface PaginatedResponse<T> {
 
 // ─── Organization ─────────────────────────────────────────────────────────────
 
-export type OrgPlan   = 'TRIAL' | 'STARTER' | 'PROFESSIONAL' | 'ENTERPRISE'
+export type OrgPlan   = 'FREE' | 'STARTER' | 'PROFESSIONAL' | 'ENTERPRISE'
 export type OrgStatus = 'TRIAL' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED'
 
 export interface Organization {

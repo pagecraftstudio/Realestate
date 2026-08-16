@@ -104,7 +104,7 @@ export async function registerOrg(input: RegisterOrgInput) {
         id:     orgId,
         name:   input.orgName,
         slug:   input.orgSlug,
-        plan:   Plan.TRIAL,
+        plan:   Plan.FREE,
         status: OrgStatus.TRIAL,
       },
     })
