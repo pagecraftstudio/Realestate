@@ -27,7 +27,7 @@ import { analyticsRoutes } from './modules/analytics/analytics.routes.js'
 import { auditLogsRoutes } from './modules/audit-logs/audit-logs.routes.js'
 import { errorHandler } from './utils/errors.js'
 import fastifyMultipart from '@fastify/multipart'
-import fastifyRawBody from '@fastify/rawbody'
+import fastifyRawBody from 'fastify-raw-body'
 import { prisma } from './lib/prisma.js'
 
 // ─── Build app ────────────────────────────────────────────────────────────────
@@ -188,7 +188,10 @@ function validateEnv() {
   const required: string[] = [
     'SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY',
-    'SUPABASE_JWT_SECRET',
+    // NOTE: SUPABASE_JWT_SECRET is NOT required here — token verification is
+    // handled by supabaseAdmin.auth.getUser() in the authenticate middleware,
+    // which uses the service role key internally. The raw JWT secret is never
+    // needed by the API process.
     'DATABASE_URL',
   ]
   const missing = required.filter((k) => !process.env[k])

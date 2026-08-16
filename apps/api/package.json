@@ -30,7 +30,7 @@
     "@aws-sdk/client-s3": "^3.590.0",
     "@aws-sdk/s3-request-presigner": "^3.590.0",
     "@fastify/multipart": "^8.3.0",
-    "@fastify/rawbody": "^5.0.0",
+    "fastify-raw-body": "^4.0.0",
     "@supabase/supabase-js": "^2.45.0",
     "@upstash/redis": "^1.34.0",
     "@upstash/ratelimit": "^2.0.4",
