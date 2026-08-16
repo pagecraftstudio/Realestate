@@ -1,4 +1,3 @@
-import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
@@ -17,11 +16,9 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // Supabase API + Realtime
       `connect-src 'self' ${process.env['NEXT_PUBLIC_SUPABASE_URL'] ?? ''} wss://*.supabase.co https://*.supabase.co ${process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000'}`,
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Next.js HMR requires unsafe-eval in dev
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      // Supabase Storage images
       `img-src 'self' data: blob: https://*.supabase.co`,
       "font-src 'self'",
       "frame-src 'none'",
@@ -32,18 +29,17 @@ const securityHeaders = [
   },
 ]
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
 
   images: {
     remotePatterns: [
-      // Supabase Storage
       {
         protocol: 'https',
         hostname: '*.supabase.co',
         pathname: '/storage/v1/object/**',
       },
-      // Local Supabase dev (supabase start)
       {
         protocol: 'http',
         hostname: 'localhost',
@@ -70,7 +66,6 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  // Reduce bundle size — suppress source maps in prod
   productionBrowserSourceMaps: false,
 }
 
