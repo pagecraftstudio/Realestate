@@ -1,15 +1,23 @@
+import React from 'react'
 import { cn } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 
 interface Props {
-  icon?: LucideIcon
+  icon?: LucideIcon | React.ReactNode
   title: string
   description?: string
   action?: React.ReactNode
   className?: string
 }
 
-export function EmptyState({ icon: Icon, title, description, action, className }: Props) {
+export function EmptyState({ icon, title, description, action, className }: Props) {
+  // Support both LucideIcon components and pre-rendered ReactNode
+  const iconNode = icon
+    ? typeof icon === 'function'
+      ? (() => { const Icon = icon as LucideIcon; return <Icon className="h-6 w-6 text-muted-foreground" /> })()
+      : icon
+    : null
+
   return (
     <div
       className={cn(
@@ -17,9 +25,9 @@ export function EmptyState({ icon: Icon, title, description, action, className }
         className,
       )}
     >
-      {Icon && (
+      {iconNode && (
         <div className="rounded-full bg-muted p-3">
-          <Icon className="h-6 w-6 text-muted-foreground" />
+          {iconNode}
         </div>
       )}
       <div>

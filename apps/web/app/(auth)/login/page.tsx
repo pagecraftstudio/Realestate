@@ -33,7 +33,7 @@ export default function LoginPage() {
     setServerError(null)
     try {
       const res = await login(data)
-      setUser(res.user)
+      setUser(res)
       const from = searchParams.get('from') ?? '/dashboard'
       router.push(from)
     } catch (err) {

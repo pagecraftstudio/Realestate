@@ -50,7 +50,7 @@ export function CalendarClient() {
     }
   }, [anchor, view])
 
-  const { data: viewingsData } = useViewings({ from, to, calendar: true, page: 1, limit: 200 })
+  const { data: viewingsData } = useViewings({ from, to, page: 1, limit: 200 })
   const { data: tasksData }    = useTasks({ limit: 200 })
 
   const events: CalEvent[] = useMemo(() => {

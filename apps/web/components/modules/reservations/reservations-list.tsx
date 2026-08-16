@@ -120,7 +120,7 @@ export function ReservationsList() {
         confirmLabel="Cancel Reservation"
         variant="destructive"
         loading={cancel.isPending}
-        onConfirm={async () => { if (cancelId) { await cancel.mutateAsync(); setCancelId(null) } }}
+        onConfirm={async () => { if (cancelId) { await cancel.mutateAsync(undefined); setCancelId(null) } }}
         onCancel={() => setCancelId(null)}
       />
     </div>

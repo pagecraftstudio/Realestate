@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { register as registerOrg } from '@/lib/auth'
-import { useAuthStore } from '@/stores/auth.store'
 import { getErrorMessage } from '@/lib/api'
 
 const schema = z.object({
@@ -24,7 +23,6 @@ type FormData = z.infer<typeof schema>
 
 export default function RegisterPage() {
   const router   = useRouter()
-  const setUser  = useAuthStore((s) => s.setUser)
   const [serverError, setServerError] = useState<string | null>(null)
 
   const {
@@ -46,8 +44,7 @@ export default function RegisterPage() {
   async function onSubmit(data: FormData) {
     setServerError(null)
     try {
-      const res = await registerOrg(data)
-      setUser(res.user)
+      await registerOrg(data)
       router.push('/dashboard')
     } catch (err) {
       setServerError(getErrorMessage(err))

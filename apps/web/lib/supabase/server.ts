@@ -32,7 +32,7 @@ export async function createSupabaseServerClient() {
       getAll() {
         return cookieStore.getAll()
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: Array<{ name: string; value: string; options: Record<string, unknown> }>) {
         // In Server Components, cookie mutation happens via the response.
         // This is handled automatically by Next.js when using cookies() from next/headers.
         try {

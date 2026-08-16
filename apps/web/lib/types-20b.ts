@@ -124,7 +124,7 @@ export interface Offer {
   lead?: { id: string; fullName: string } | null
   customer?: { id: string; fullName: string } | null
   unit: { id: string; unitNumber: string; project: { name: string } }
-  agent: { id: string; profile: { firstName: string | null; lastName: string | null } | null }
+  agent: { id: string; profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null }
 }
 
 export interface Reservation {
@@ -144,5 +144,5 @@ export interface Reservation {
   updatedAt: string
   unit: { id: string; unitNumber: string; project: { name: string; city: string | null }; price: string }
   customer: { id: string; fullName: string; phone: string | null }
-  agent: { id: string; profile: { firstName: string | null; lastName: string | null } | null }
+  agent: { id: string; profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null }
 }

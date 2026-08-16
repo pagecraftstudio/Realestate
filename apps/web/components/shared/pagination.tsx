@@ -5,11 +5,11 @@ interface Props {
   page: number
   pages: number
   total: number
-  limit: number
+  limit?: number
   onChange: (page: number) => void
 }
 
-export function Pagination({ page, pages, total, limit, onChange }: Props) {
+export function Pagination({ page, pages, total, limit = 20, onChange }: Props) {
   if (pages <= 1) return null
   const from = (page - 1) * limit + 1
   const to = Math.min(page * limit, total)
