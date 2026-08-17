@@ -270,7 +270,7 @@ export async function deleteUnit(actor: AuthUser, unitId: string) {
     throw new ConflictError('Cannot delete unit with active reservation or deal.')
   }
 
-  if ([UnitStatus.RESERVED, UnitStatus.SOLD, UnitStatus.CONTRACTED, UnitStatus.ON_HOLD].includes(existing.status as UnitStatus)) {
+  if (([UnitStatus.RESERVED, UnitStatus.SOLD, UnitStatus.CONTRACTED, UnitStatus.ON_HOLD] as string[]).includes(existing.status)) {
     throw new ConflictError('Cannot delete reserved, contracted, or sold unit.')
   }
 
