@@ -153,7 +153,7 @@ export async function createLead(actor: AuthUser, data: CreateLeadInput) {
       payload: {
         source: data.source,
         assignedAgentId: data.assignedAgentId ?? null,
-      } as unknown,
+      } as any,
     },
   })
 
@@ -345,7 +345,7 @@ export async function updateLead(actor: AuthUser, leadId: string, data: UpdateLe
         organizationId: actor.organizationId,
         actorId: actor.id,
         type: 'STATUS_CHANGED',
-        payload: { from: oldStatus, to: data.status } as unknown,
+        payload: { from: oldStatus, to: data.status } as any,
       },
     })
   }
@@ -358,7 +358,7 @@ export async function updateLead(actor: AuthUser, leadId: string, data: UpdateLe
         organizationId: actor.organizationId,
         actorId: actor.id,
         type: 'TEMPERATURE_CHANGED',
-        payload: { from: oldTemperature, to: data.temperature } as unknown,
+        payload: { from: oldTemperature, to: data.temperature } as any,
       },
     })
   }
@@ -429,7 +429,7 @@ export async function assignLead(actor: AuthUser, leadId: string, data: AssignLe
         previousAgentId,
         newAgentId: data.agentId,
         teamId: data.teamId ?? null,
-      } as unknown,
+      } as any,
     },
   })
 
@@ -464,7 +464,7 @@ export async function addActivity(actor: AuthUser, leadId: string, data: AddActi
       organizationId: actor.organizationId,
       actorId: actor.id,
       type: data.type,
-      payload: data.payload as unknown,
+      payload: data.payload as any,
     },
     select: {
       id: true,
@@ -552,7 +552,7 @@ export async function recalculateScore(actor: AuthUser, leadId: string): Promise
   // Evaluate signals
   let score = 0
   const addIf = (signal: string, condition: boolean) => {
-    if (condition && ruleMap[signal] !== undefined) score += ruleMap[signal]
+    if (condition && ruleMap[signal] !== undefined) score += ruleMap[signal]!
   }
 
   addIf('HAS_PHONE', Boolean(lead.phone))
@@ -587,7 +587,7 @@ export async function recalculateScore(actor: AuthUser, leadId: string): Promise
       organizationId: actor.organizationId,
       actorId: actor.id,
       type: 'SCORE_UPDATED',
-      payload: { score } as unknown,
+      payload: { score } as any,
     },
   })
 
@@ -652,7 +652,7 @@ export async function convertToCustomer(actor: AuthUser, leadId: string, data: C
       organizationId: actor.organizationId,
       actorId: actor.id,
       type: 'CONVERTED_TO_CUSTOMER',
-      payload: { customerId: customer.id } as unknown,
+      payload: { customerId: customer.id } as any,
     },
   })
 

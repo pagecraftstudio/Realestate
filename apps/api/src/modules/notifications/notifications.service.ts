@@ -131,7 +131,7 @@ export async function createNotification(
       type:           input.type as NotificationType,
       title:          input.title,
       body:           input.body,
-      payload:        (input.payload ?? {}) as unknown,
+      payload:        (input.payload ?? {}) as any,
     },
     select: notifSelect(),
   })
@@ -156,7 +156,7 @@ export async function emitNotification(params: {
       type:           params.type,
       title:          params.title,
       body:           params.body,
-      payload:        (params.payload ?? {}) as unknown,
+      payload:        (params.payload ?? {}) as any,
     },
     select: notifSelect(),
   })

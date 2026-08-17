@@ -134,7 +134,7 @@ export async function createCommissionRule(
 
     const { conditions: rawConditions, ...restInput } = input
     return tx.commissionRule.create({
-      data: { ...restInput, organizationId: actor.organizationId, conditions: (rawConditions ?? {}) as unknown },
+      data: { ...restInput, organizationId: actor.organizationId, conditions: (rawConditions ?? {}) as any },
       select: ruleSelect(),
     })
   })
@@ -191,7 +191,7 @@ export async function updateCommissionRule(
     const { conditions: updConditions, ...restUpdate } = input
     return tx.commissionRule.update({
       where: { id },
-      data: updConditions !== undefined ? { ...restUpdate, conditions: updConditions as unknown } : restUpdate,
+      data: updConditions !== undefined ? { ...restUpdate, conditions: updConditions as any } : restUpdate,
       select: ruleSelect(),
     })
   })
