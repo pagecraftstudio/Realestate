@@ -1,22 +1,13 @@
 /**
  * Vercel Cron Job — expires overdue reservations.
- *
  * Schedule: every 5 minutes (see vercel.json crons section).
- * Secured with CRON_SECRET — Vercel sets Authorization: Bearer <secret>
- * automatically on cron invocations.
+ * Secured with CRON_SECRET.
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { buildApp } from '../src/main.js'
-import type { FastifyInstance } from 'fastify'
+import { PrismaClient } from '@prisma/client'
 
-let _app: FastifyInstance | null = null
-async function getApp() {
-  if (_app) return _app
-  _app = await buildApp()
-  await _app.ready()
-  return _app
-}
+const prisma = new PrismaClient()
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Verify cron secret
@@ -29,15 +20,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const app = await getApp()
-
-    // Find all ACTIVE reservations past their expiry
-    const { prisma } = await import('../src/lib/prisma.js')
     const expired = await prisma.reservation.findMany({
-      where: {
-        status: 'ACTIVE',
-        expiresAt: { lt: new Date() },
-      },
+      where: { status: 'ACTIVE', expiresAt: { lt: new Date() } },
       select: { id: true, unitId: true },
     })
 
@@ -45,10 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.json({ expired: 0, message: 'Nothing to expire' })
     }
 
-    // Expire reservations AND release units atomically in a single transaction.
-    // Previously these were two separate $transaction calls — if the process
-    // crashed between them, units would remain RESERVED forever.
-    const results = await prisma.$transaction(
+    await prisma.$transaction(
       expired.flatMap((r) => [
         prisma.reservation.update({
           where: { id: r.id },
@@ -61,12 +42,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ]),
     )
 
-    // results has 2 entries per reservation (reservation update + unit update)
-    const expiredCount = expired.length
-    app.log.info({ count: expiredCount }, '[cron] expired reservations')
-    return res.json({ expired: expiredCount, ids: expired.map((r) => r.id) })
+    console.info(`[cron] expired ${expired.length} reservations`)
+    return res.json({ expired: expired.length, ids: expired.map((r) => r.id) })
   } catch (err) {
     console.error('[cron/expire-reservations]', err)
     return res.status(500).json({ error: 'Internal error' })
+  } finally {
+    await prisma.$disconnect()
   }
 }
