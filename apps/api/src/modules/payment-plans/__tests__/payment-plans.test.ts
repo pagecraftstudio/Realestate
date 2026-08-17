@@ -67,9 +67,9 @@ const INST_ID  = 'inst_1'
 const PAY_ID   = 'pay_1'
 const CUST_ID  = 'cust_1'
 
-const adminActor     = { id: 'admin_1', organizationId: ORG_ID, role: UserRole.COMPANY_ADMIN }
-const accountant     = { id: 'acc_1',   organizationId: ORG_ID, role: UserRole.ACCOUNTANT }
-const agentActor     = { id: 'agent_1', organizationId: ORG_ID, role: UserRole.SALES_AGENT }
+const adminActor     = { id: 'admin_1', userId: 'admin_1', supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.COMPANY_ADMIN }
+const accountant     = { id: 'acc_1', userId: 'acc_1', supabaseUid: 'sb-test',   organizationId: ORG_ID, role: UserRole.ACCOUNTANT }
+const agentActor     = { id: 'agent_1', userId: 'agent_1', supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.SALES_AGENT }
 
 const baseDeal = {
   id:             DEAL_ID,

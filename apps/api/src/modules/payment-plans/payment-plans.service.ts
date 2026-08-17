@@ -38,12 +38,14 @@ function isAccountant(actor: AuthUser) {
   return actor.role === UserRole.ACCOUNTANT
 }
 
+const ADMIN_OR_MANAGER_ROLES: UserRole[] = [
+  UserRole.COMPANY_ADMIN,
+  UserRole.SALES_MANAGER,
+  UserRole.SUPER_ADMIN,
+]
+
 function isAdminOrManager(actor: AuthUser) {
-  return [
-    UserRole.COMPANY_ADMIN,
-    UserRole.SALES_MANAGER,
-    UserRole.SUPER_ADMIN,
-  ].includes(actor.role as UserRole)
+  return ADMIN_OR_MANAGER_ROLES.includes(actor.role)
 }
 
 /**
@@ -211,7 +213,7 @@ export async function createPaymentPlan(
         handoverAmount:   handover,
         frequencyMonths:  input.frequencyMonths,
         startDate,
-        notes:            input.notes,
+        notes:            input.notes ?? null,
       },
       select: { id: true },
     })
@@ -402,15 +404,15 @@ export async function recordPayment(actor: AuthUser, input: RecordPaymentInput) 
       data: {
         organizationId:  actor.organizationId,
         dealId:          input.dealId,
-        installmentId:   input.installmentId,
+        installmentId:   input.installmentId ?? null,
         customerId:      deal.customerId,
         amount:          input.amount,
         method:          input.method,
         status:          'COMPLETED',
-        referenceNumber: input.referenceNumber,
-        receiptUrl:      input.receiptUrl,
+        referenceNumber: input.referenceNumber ?? null,
+        receiptUrl:      input.receiptUrl ?? null,
         paidAt:          new Date(input.paidAt),
-        notes:           input.notes,
+        notes:           input.notes ?? null,
       },
       select: paymentSelect(),
     })
@@ -430,8 +432,8 @@ export async function recordPayment(actor: AuthUser, input: RecordPaymentInput) 
           paidAmount:      newPaid,
           remainingAmount: newRemaining,
           status:          newStatus,
-          paidAt:          newRemaining === 0 ? new Date(input.paidAt) : undefined,
-          overdueDays:     newRemaining === 0 ? 0 : undefined,
+          paidAt:          newRemaining === 0 ? new Date(input.paidAt) : null,
+          overdueDays:     newRemaining === 0 ? 0 : null,
         },
       })
     }

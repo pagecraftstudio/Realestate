@@ -114,17 +114,19 @@ import { prisma } from '../../../lib/prisma.js'
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const adminActor = {
+  id:             'admin1',
   userId:         'admin1',
   organizationId: 'org1',
   role:           'COMPANY_ADMIN' as const,
-  email:          'admin@test.com',
+  supabaseUid:    'sb-admin1',
 }
 
 const agentActor = {
+  id:             'agent1',
   userId:         'agent1',
   organizationId: 'org1',
   role:           'SALES_AGENT' as const,
-  email:          'agent@test.com',
+  supabaseUid:    'sb-agent1',
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────

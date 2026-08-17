@@ -24,10 +24,9 @@ vi.mock('../../../lib/whatsapp/index.js', () => ({
 }))
 
 const mockAgent: AuthUser = {
-  id: 'agent-1',
+  id: 'agent-1', userId: 'agent-1', supabaseUid: 'sb-test',
   organizationId: 'org-1',
   role: 'SALES_AGENT',
-  email: 'agent@test.com',
 }
 
 const mockComm = {

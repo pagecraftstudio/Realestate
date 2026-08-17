@@ -44,8 +44,8 @@ const UNIT_ID  = 'unit_1'
 const DEAL_ID  = 'deal_1'
 const RES_ID   = 'res_1'
 
-const managerActor = { id: AGENT_ID, organizationId: ORG_ID, role: UserRole.SALES_MANAGER }
-const agentActor   = { id: AGENT_ID, organizationId: ORG_ID, role: UserRole.SALES_AGENT }
+const managerActor = { id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.SALES_MANAGER }
+const agentActor   = { id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.SALES_AGENT }
 
 const baseUnit = { id: UNIT_ID, organizationId: ORG_ID, status: UnitStatus.AVAILABLE, price: 1_000_000 }
 const baseCustomer = { id: CUST_ID, organizationId: ORG_ID, fullName: 'Test Customer' }

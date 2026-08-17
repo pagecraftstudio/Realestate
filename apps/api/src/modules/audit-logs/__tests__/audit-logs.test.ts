@@ -21,11 +21,11 @@ import * as svc from '../audit-logs.service.js'
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const makeActor = (role: UserRole = UserRole.COMPANY_ADMIN): AuthUser => ({
-  userId:         'actor-1',
   id:             'actor-1',
+  userId:         'actor-1',
   organizationId: 'org-1',
   role,
-  email:          'admin@test.com',
+  supabaseUid:    'sb-test',
 })
 
 const sampleLog = {

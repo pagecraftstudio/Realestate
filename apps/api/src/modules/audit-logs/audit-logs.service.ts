@@ -17,7 +17,7 @@ export class NotFoundError extends Error {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const ADMIN_ROLES = [UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN]
+const ADMIN_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN, UserRole.SALES_MANAGER]
 
 function assertAdmin(actor: AuthUser) {
   if (!ADMIN_ROLES.includes(actor.role as UserRole)) {

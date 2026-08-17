@@ -40,8 +40,8 @@ const UNIT_ID  = 'unit_1'
 const LEAD_ID  = 'lead_1'
 const OFFER_ID = 'offer_1'
 
-const managerActor = { id: AGENT_ID, organizationId: ORG_ID, role: UserRole.SALES_MANAGER }
-const agentActor   = { id: AGENT_ID, organizationId: ORG_ID, role: UserRole.SALES_AGENT }
+const managerActor = { id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.SALES_MANAGER }
+const agentActor   = { id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.SALES_AGENT }
 
 const baseUnit = {
   id: UNIT_ID, organizationId: ORG_ID,

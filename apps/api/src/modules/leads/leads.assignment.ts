@@ -54,6 +54,7 @@ async function roundRobin(organizationId: string, teamId?: string): Promise<stri
 
   const idx = await getRRIndex(organizationId)
   const selected = agents[idx % agents.length]
+  if (!selected) return null
   await advanceRRIndex(organizationId, idx + 1)
   return selected.id
 }
@@ -74,14 +75,14 @@ async function leastActiveLeads(organizationId: string, teamId?: string): Promis
       },
       isArchived: false,
     },
-    _count: { _all: true },
+    _count: { assignedAgentId: true },
   })
 
-  const countMap = new Map(counts.map((c) => [c.assignedAgentId!, c._count._all]))
+  const countMap = new Map(counts.map((c) => [c.assignedAgentId!, c._count.assignedAgentId ?? 0]))
 
   // Sort agents by active lead count ascending, pick the least loaded
   const sorted = agents.sort((a, b) => (countMap.get(a.id) ?? 0) - (countMap.get(b.id) ?? 0))
-  return sorted[0].id
+  return sorted[0]?.id ?? null
 }
 
 // ─── Public: auto-assign ──────────────────────────────────────────────────────

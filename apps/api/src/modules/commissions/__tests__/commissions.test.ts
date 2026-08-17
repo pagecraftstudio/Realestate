@@ -58,9 +58,9 @@ const COMM_ID  = 'comm_1'
 const AGENT_ID = 'agent_1'
 const MGR_ID   = 'mgr_1'
 
-const adminActor     = { id: MGR_ID,   organizationId: ORG_ID, role: UserRole.COMPANY_ADMIN }
-const accountant     = { id: 'acc_1',  organizationId: ORG_ID, role: UserRole.ACCOUNTANT }
-const agentActor     = { id: AGENT_ID, organizationId: ORG_ID, role: UserRole.SALES_AGENT }
+const adminActor     = { id: MGR_ID, userId: MGR_ID, supabaseUid: 'sb-test',   organizationId: ORG_ID, role: UserRole.COMPANY_ADMIN }
+const accountant     = { id: 'acc_1', userId: 'acc_1', supabaseUid: 'sb-test',  organizationId: ORG_ID, role: UserRole.ACCOUNTANT }
+const agentActor     = { id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test', organizationId: ORG_ID, role: UserRole.SALES_AGENT }
 
 const baseRule = {
   id: RULE_ID, organizationId: ORG_ID,

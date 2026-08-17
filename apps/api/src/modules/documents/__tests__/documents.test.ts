@@ -57,7 +57,7 @@ const mockDocMeta = {
 vi.mock('../../../lib/prisma.js', () => ({
   prisma: {
     lead: {
-      findFirst: vi.fn().mockResolvedValue({ id: 'lead1', organizationId: 'org1' }),
+      findFirst: vi.fn().mockResolvedValue({ id: 'lead1', userId: 'lead1', supabaseUid: 'sb-test', organizationId: 'org1' }),
     },
     customer: {
       findFirst: vi.fn().mockResolvedValue(null),

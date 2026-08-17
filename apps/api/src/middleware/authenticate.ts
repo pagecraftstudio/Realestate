@@ -1,15 +1,11 @@
 /**
- * Phase H — Fastify authenticate middleware (Supabase Auth)
+ * authenticate middleware — Supabase Auth JWT verification.
  *
  * Flow:
  *   1. Extract Bearer token from Authorization header
  *   2. Verify with Supabase Admin (supabaseAdmin.auth.getUser)
- *   3. Look up app user by auth_user_id
- *   4. Build AuthUser with both `id` and `userId` (same value) for compatibility
- *   5. Set request.authUser
- *
- * request.authUser is also aliased to request.user for modules that
- * were scaffolded using the old req.user pattern (phases 13–15).
+ *   3. Look up app user by email (schema has no authUserId column)
+ *   4. Build AuthUser and set on request.authUser
  */
 
 import type { FastifyRequest, FastifyReply } from 'fastify'
@@ -21,6 +17,8 @@ import type { UserRole } from '@prisma/client'
 declare module 'fastify' {
   interface FastifyRequest {
     authUser?: AuthUser
+    // compat alias used by some older modules
+    user?: AuthUser
   }
 }
 
@@ -42,11 +40,11 @@ export async function authenticate(
       return reply.status(401).send({ error: 'Invalid or expired token' })
     }
 
-    // Look up app user
+    // Look up app user by email (organizationId+email is unique)
     const appUser = await prisma.user.findFirst({
       where: {
-        authUserId:     supabaseUser.id,
-        status:         'ACTIVE',
+        email:  supabaseUser.email ?? '',
+        status: 'ACTIVE',
       },
       select: {
         id:             true,
@@ -69,14 +67,15 @@ export async function authenticate(
     }
 
     request.authUser = authUser
+    // compat alias
+    request.user = authUser
 
-    // Fire-and-forget lastSeenAt — non-critical but log failures for visibility
+    // Fire-and-forget lastLoginAt update (field exists on User model)
     prisma.user.update({
       where: { id: appUser.id },
-      data:  { lastSeenAt: new Date() },
+      data:  { lastLoginAt: new Date() },
     }).catch((err: unknown) => {
-      // Use console.warn — fastify instance not in scope here
-      console.warn('[authenticate] Failed to update lastSeenAt:', (err as Error)?.message)
+      console.warn('[authenticate] Failed to update lastLoginAt:', (err as Error)?.message)
     })
 
   } catch {

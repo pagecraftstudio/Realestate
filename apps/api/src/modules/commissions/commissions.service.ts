@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma.js'
-import { CommissionStatus, DealStatus, UserRole } from '@prisma/client'
+import { CommissionStatus, DealStatus, UserRole, Prisma } from '@prisma/client'
 import type { AuthUser } from '../../types/auth.js'
 import type {
   CreateCommissionRuleInput,
@@ -131,8 +131,9 @@ export async function createCommissionRule(
       })
     }
 
+    const { conditions: rawConditions, ...restInput } = input
     return tx.commissionRule.create({
-      data: { ...input, organizationId: actor.organizationId },
+      data: { ...restInput, organizationId: actor.organizationId, conditions: (rawConditions ?? {}) as Prisma.InputJsonValue },
       select: ruleSelect(),
     })
   })
@@ -186,9 +187,10 @@ export async function updateCommissionRule(
         data:  { isDefault: false },
       })
     }
+    const { conditions: updConditions, ...restUpdate } = input
     return tx.commissionRule.update({
       where: { id },
-      data: input,
+      data: updConditions !== undefined ? { ...restUpdate, conditions: updConditions as Prisma.InputJsonValue } : restUpdate,
       select: ruleSelect(),
     })
   })
@@ -270,13 +272,13 @@ export async function calculateCommission(
       organizationId: actor.organizationId,
       dealId:         input.dealId,
       agentId:        deal.agentId,
-      managerId:      deal.managerId ?? undefined,
+      managerId:      deal.managerId ?? null,
       agentRate,
       managerRate,
       agentAmount:    agentAmt,
       managerAmount:  managerAmt,
       totalAmount:    totalAmt,
-      notes:          input.notes,
+      notes:          input.notes ?? null,
     },
     select: commissionSelect(),
   })
@@ -365,7 +367,7 @@ export async function updateCommissionStatus(
     where: { id },
     data: {
       status: input.status as CommissionStatus,
-      notes:  input.notes,
+      notes:  input.notes ?? null,
       ...extraData,
     },
     select: commissionSelect(),

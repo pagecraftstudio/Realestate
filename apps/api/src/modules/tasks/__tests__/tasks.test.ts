@@ -18,17 +18,15 @@ vi.mock('../../../lib/prisma.js', () => ({
 }))
 
 const mockAdmin: AuthUser = {
-  id: 'admin-1',
+  id: 'admin-1', userId: 'admin-1', supabaseUid: 'sb-test',
   organizationId: 'org-1',
   role: 'COMPANY_ADMIN',
-  email: 'admin@test.com',
 }
 
 const mockAgent: AuthUser = {
-  id: 'agent-1',
+  id: 'agent-1', userId: 'agent-1', supabaseUid: 'sb-test',
   organizationId: 'org-1',
   role: 'SALES_AGENT',
-  email: 'agent@test.com',
 }
 
 const mockTask = {

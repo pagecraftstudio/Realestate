@@ -391,7 +391,7 @@ export async function getRevenueChart(actor: AuthUser, query: RevenueChartQuery)
     where: {
       organizationId: orgId,
       ...(query.from || query.to
-        ? { paidAt: dateFilter(query.from, query.to) }
+        ? { paidAt: (dateFilter(query.from, query.to) ?? undefined) }
         : {}),
     },
     select: { amount: true, paidAt: true },
@@ -452,16 +452,16 @@ export async function getLeadSourceBreakdown(actor: AuthUser, query: LeadSourceQ
       organizationId: orgId,
       ...(query.from || query.to ? { createdAt: dateFilter(query.from, query.to) } : {}),
     },
-    _count: { _all: true },
+    _count: { id: true },
     orderBy: { _count: { source: 'desc' } },
   })
 
-  const total = groups.reduce((s, g) => s + g._count._all, 0)
+  const total = groups.reduce((s, g) => s + (g._count?.id ?? 0), 0)
 
   return groups.map((g) => ({
     source:     g.source,
-    count:      g._count._all,
-    percentage: total > 0 ? Number(((g._count._all / total) * 100).toFixed(2)) : 0,
+    count:      g._count.id,
+    percentage: total > 0 ? Number(((g._count.id / total) * 100).toFixed(2)) : 0,
   }))
 }
 
@@ -700,17 +700,17 @@ export async function getPipelineSummary(actor: AuthUser, query: PipelineQuery) 
       status: { notIn: [DealStatus.COMPLETED, DealStatus.CANCELLED] },
       ...agentFilter,
     },
-    _count: { _all: true },
+    _count: { id: true },
     _sum:   { netSaleValue: true },
   })
 
   const totalValue = groups.reduce((s, g) => s + toNumber(g._sum.netSaleValue), 0)
-  const totalCount = groups.reduce((s, g) => s + g._count._all, 0)
+  const totalCount = groups.reduce((s, g) => s + (g._count?.id ?? 0), 0)
 
   return {
     stages: groups.map((g) => ({
       stage:      g.pipelineStage,
-      count:      g._count._all,
+      count:      g._count?.id ?? 0,
       totalValue: toNumber(g._sum.netSaleValue),
     })),
     totals: {

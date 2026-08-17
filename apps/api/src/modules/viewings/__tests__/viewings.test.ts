@@ -45,13 +45,13 @@ const UNIT_ID  = 'unit_1'
 const VIEW_ID  = 'view_1'
 
 const managerActor = {
-  id:             AGENT_ID,
+  id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test',
   organizationId: ORG_ID,
   role:           UserRole.SALES_MANAGER,
 }
 
 const agentActor = {
-  id:             AGENT_ID,
+  id: AGENT_ID, userId: AGENT_ID, supabaseUid: 'sb-test',
   organizationId: ORG_ID,
   role:           UserRole.SALES_AGENT,
 }

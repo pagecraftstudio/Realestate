@@ -21,13 +21,13 @@ export class ConflictError extends Error {
 // A sold/contracted unit cannot be made available via a simple status update.
 // Those transitions must go through deal/reservation cancellation flows.
 
-const BLOCKED_DIRECT_TRANSITIONS: Partial<Record<UnitStatus, UnitStatus[]>> = {
-  SOLD: [UnitStatus.AVAILABLE, UnitStatus.ON_HOLD],
-  CONTRACTED: [UnitStatus.AVAILABLE, UnitStatus.ON_HOLD],
-}
+const BLOCKED_DIRECT_TRANSITIONS = new Map<UnitStatus, UnitStatus[]>([
+  [UnitStatus.SOLD, [UnitStatus.AVAILABLE, UnitStatus.ON_HOLD]],
+  [UnitStatus.CONTRACTED, [UnitStatus.AVAILABLE, UnitStatus.ON_HOLD]],
+])
 
 function assertStatusTransition(from: UnitStatus, to: UnitStatus) {
-  const blocked = BLOCKED_DIRECT_TRANSITIONS[from]
+  const blocked = BLOCKED_DIRECT_TRANSITIONS.get(from)
   if (blocked?.includes(to)) {
     throw new ConflictError(
       `Cannot change unit status from ${from} to ${to} directly. Cancel the deal/reservation first.`,
@@ -196,7 +196,7 @@ export async function getUnit(actor: AuthUser, unitId: string) {
         select: {
           id: true,
           status: true,
-          reservedAt: true,
+          reservationDate: true,
           expiresAt: true,
           customer: { select: { id: true, fullName: true, phone: true } },
         },
@@ -205,7 +205,7 @@ export async function getUnit(actor: AuthUser, unitId: string) {
         select: {
           id: true,
           status: true,
-          dealValue: true,
+          netSaleValue: true,
           pipelineStage: true,
           customer: { select: { id: true, fullName: true } },
           agent: {

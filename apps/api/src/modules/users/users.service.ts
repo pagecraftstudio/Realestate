@@ -133,8 +133,8 @@ export async function inviteUser(actor: AuthUser, input: InviteUserInput) {
   }
 
   // Check email unique within org
-  const existing = await prisma.user.findUnique({
-    where: { email: input.email },
+  const existing = await prisma.user.findFirst({
+    where: { email: input.email.toLowerCase(), organizationId: actor.organizationId },
     select: { id: true, organizationId: true },
   })
   if (existing) {

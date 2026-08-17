@@ -98,11 +98,10 @@ export async function communicationsRoutes(fastify: FastifyInstance) {
 
     const phoneNumberId = extractPhoneNumberId(body)
     if (phoneNumberId) {
-      const org = await prisma.organization.findFirst({
-        where:  { whatsappPhoneNumberId: phoneNumberId },
-        select: { id: true },
-      }).catch(() => null)
-      orgId = org?.id ?? null
+      // Organization lookup by phone number ID — use env var mapping for now
+      // (schema doesn't have whatsappPhoneNumberId column; extend settings JSON if needed)
+      const mappedOrgId = process.env[`WHATSAPP_ORG_${phoneNumberId}`] ?? null
+      orgId = mappedOrgId
     }
 
     // Fallback: single-tenant env var (deprecated — use DB mapping instead)

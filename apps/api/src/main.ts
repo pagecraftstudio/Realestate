@@ -33,14 +33,14 @@ import { prisma } from './lib/prisma.js'
 // ─── Build app ────────────────────────────────────────────────────────────────
 
 export async function buildApp() {
+  const isDev = process.env['NODE_ENV'] === 'development'
   const fastify = Fastify({
-    logger: {
-      level: process.env['LOG_LEVEL'] ?? 'info',
-      transport:
-        process.env['NODE_ENV'] === 'development'
-          ? { target: 'pino-pretty', options: { colorize: true } }
-          : undefined,
-    },
+    logger: isDev
+      ? {
+          level: process.env['LOG_LEVEL'] ?? 'info',
+          transport: { target: 'pino-pretty', options: { colorize: true } },
+        }
+      : { level: process.env['LOG_LEVEL'] ?? 'info' },
     trustProxy: true,
   })
 

@@ -112,7 +112,6 @@ export async function registerOrg(input: RegisterOrgInput) {
     await tx.user.create({
       data: {
         id:             userId,
-        authUserId:     authUser.id,
         organizationId: orgId,
         email:          input.email.toLowerCase(),
         role:           UserRole.COMPANY_ADMIN,
@@ -174,8 +173,8 @@ export async function login(input: LoginInput) {
   // Fetch app user details
   const appUser = await prisma.user.findFirst({
     where: {
-      authUserId: data.user.id,
-      status:     UserStatus.ACTIVE,
+      email:  data.user.email?.toLowerCase() ?? '',
+      status: UserStatus.ACTIVE,
     },
     select: {
       id:             true,

@@ -24,17 +24,15 @@ vi.mock('../../../lib/prisma.js', () => ({
 }))
 
 const mockUser: AuthUser = {
-  id: 'user-1',
+  id: 'user-1', userId: 'user-1', supabaseUid: 'sb-test',
   organizationId: 'org-1',
   role: 'SALES_AGENT',
-  email: 'agent@test.com',
 }
 
 const mockAdmin: AuthUser = {
-  id: 'admin-1',
+  id: 'admin-1', userId: 'admin-1', supabaseUid: 'sb-test',
   organizationId: 'org-1',
   role: 'COMPANY_ADMIN',
-  email: 'admin@test.com',
 }
 
 const mockNotif = {
@@ -62,7 +60,7 @@ describe('Notifications Service', () => {
 
       expect(prisma.notification.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ userId: 'user-1' }),
+          where: expect.objectContaining({ id: 'user-1', userId: 'user-1', supabaseUid: 'sb-test' }),
         }),
       )
     })
@@ -83,7 +81,7 @@ describe('Notifications Service', () => {
       const result = await markRead(mockUser, { ids: ['notif-1', 'notif-2'] })
       expect(prisma.notification.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ userId: 'user-1', isRead: false }),
+          where: expect.objectContaining({ id: 'user-1', userId: 'user-1', supabaseUid: 'sb-test', isRead: false }),
         }),
       )
       expect(result.updated).toBe(2)
@@ -115,7 +113,7 @@ describe('Notifications Service', () => {
   describe('createNotification', () => {
     it('non-admin cannot create', async () => {
       await expect(
-        createNotification(mockUser, { userId: 'u', type: 'TASK_DUE', title: 'T' }),
+        createNotification(mockUser, { id: 'u', userId: 'u', supabaseUid: 'sb-test', type: 'TASK_DUE', title: 'T' }),
       ).rejects.toThrow('Only admins')
     })
 
@@ -123,7 +121,7 @@ describe('Notifications Service', () => {
       vi.mocked(prisma.user.findFirst).mockResolvedValue({ id: 'user-1' } as any)
       vi.mocked(prisma.notification.create).mockResolvedValue(mockNotif as any)
       const result = await createNotification(mockAdmin, {
-        userId: 'user-1',
+        id: 'user-1', userId: 'user-1', supabaseUid: 'sb-test',
         type: 'TASK_DUE',
         title: 'Task due soon',
       })

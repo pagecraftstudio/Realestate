@@ -115,7 +115,7 @@ export async function uploadDocument(
   fileBuffer: Buffer,
   mimeType: string,
   originalFilename: string,
-): Promise<{ id: string; name: string; fileType: string; fileSizeBytes: number }> {
+): Promise<{ id: string; name: string; fileType: string | null; fileSizeBytes: number | null }> {
   // Validate MIME
   if (!validateMimeType(mimeType)) {
     throw new BadRequestError(

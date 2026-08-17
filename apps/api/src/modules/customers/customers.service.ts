@@ -222,7 +222,7 @@ export async function getCustomer(actor: AuthUser, customerId: string) {
       deals: {
         select: {
           id: true,
-          dealValue: true,
+          netSaleValue: true,
           status: true,
           pipelineStage: true,
           unit: { select: { id: true, unitNumber: true } },
