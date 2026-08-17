@@ -351,10 +351,10 @@ export async function getSalesFunnel(actor: AuthUser, query: FunnelQuery) {
 
   const funnel = stages.map((stage, i) => ({
     stage,
-    count: counts[i],
-    conversionFromPrev: i === 0 || counts[i - 1] === 0
+    count: counts[i] ?? 0,
+    conversionFromPrev: i === 0 || (counts[i - 1] ?? 0) === 0
       ? null
-      : Number(((counts[i] / counts[i - 1]) * 100).toFixed(2)),
+      : Number((((counts[i] ?? 0) / (counts[i - 1] ?? 1)) * 100).toFixed(2)),
   }))
 
   // Viewing → Offer → Reservation → Deal conversion rates
@@ -372,9 +372,9 @@ export async function getSalesFunnel(actor: AuthUser, query: FunnelQuery) {
     reservationCount: totalReservations,
     closedDealCount:  closedDeals,
     kpis: {
-      leadToQualified:       funnel[0].count > 0 ? Number(((funnel[2].count / funnel[0].count) * 100).toFixed(2)) : 0,
-      qualifiedToViewing:    funnel[2].count > 0 ? Number(((funnel[3].count / funnel[2].count) * 100).toFixed(2)) : 0,
-      viewingToOffer:        funnel[4].count > 0 ? Number(((totalOffers       / funnel[4].count) * 100).toFixed(2)) : 0,
+      leadToQualified:       (funnel[0]?.count ?? 0) > 0 ? Number((((funnel[2]?.count ?? 0) / (funnel[0]?.count ?? 1)) * 100).toFixed(2)) : 0,
+      qualifiedToViewing:    (funnel[2]?.count ?? 0) > 0 ? Number((((funnel[3]?.count ?? 0) / (funnel[2]?.count ?? 1)) * 100).toFixed(2)) : 0,
+      viewingToOffer:        (funnel[4]?.count ?? 0) > 0 ? Number(((totalOffers              / (funnel[4]?.count ?? 1)) * 100).toFixed(2)) : 0,
       offerToReservation:    totalOffers > 0       ? Number(((totalReservations / totalOffers)       * 100).toFixed(2)) : 0,
       reservationToClose:    totalReservations > 0 ? Number(((closedDeals       / totalReservations) * 100).toFixed(2)) : 0,
     },

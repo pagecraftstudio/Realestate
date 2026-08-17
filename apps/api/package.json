@@ -41,7 +41,9 @@
     "@types/node": "^20.12.7",
     "prisma": "^5.13.0",
     "tsx": "^4.9.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0",
+    "@vitest/coverage-v8": "^1.6.0"
   },
   "engines": {
     "node": ">=22.0.0"

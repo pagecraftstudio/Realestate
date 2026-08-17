@@ -69,7 +69,7 @@ export async function logCommunication(actor: AuthUser, input: LogCommunicationI
       subject:        input.subject,
       content:        input.content,
       attachmentUrls: input.attachmentUrls,
-      metadata:       (input.metadata ?? null) as Prisma.InputJsonValue | null,
+      metadata:       input.metadata !== undefined ? (input.metadata as Prisma.InputJsonValue) : undefined,
       sentAt:         input.sentAt ? new Date(input.sentAt) : new Date(),
     },
     select: commSelect(),

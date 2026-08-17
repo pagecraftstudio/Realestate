@@ -433,7 +433,7 @@ export async function recordPayment(actor: AuthUser, input: RecordPaymentInput) 
           remainingAmount: newRemaining,
           status:          newStatus,
           paidAt:          newRemaining === 0 ? new Date(input.paidAt) : null,
-          overdueDays:     newRemaining === 0 ? 0 : null,
+          overdueDays:     newRemaining === 0 ? 0 : undefined,
         },
       })
     }

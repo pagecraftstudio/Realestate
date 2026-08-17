@@ -113,7 +113,7 @@ describe('Notifications Service', () => {
   describe('createNotification', () => {
     it('non-admin cannot create', async () => {
       await expect(
-        createNotification(mockUser, { id: 'u', userId: 'u', supabaseUid: 'sb-test', type: 'TASK_DUE', title: 'T' }),
+        createNotification(mockUser, { userId: 'u', type: 'TASK_DUE', title: 'T' }),
       ).rejects.toThrow('Only admins')
     })
 
@@ -121,7 +121,7 @@ describe('Notifications Service', () => {
       vi.mocked(prisma.user.findFirst).mockResolvedValue({ id: 'user-1' } as any)
       vi.mocked(prisma.notification.create).mockResolvedValue(mockNotif as any)
       const result = await createNotification(mockAdmin, {
-        id: 'user-1', userId: 'user-1', supabaseUid: 'sb-test',
+        userId: 'user-1',
         type: 'TASK_DUE',
         title: 'Task due soon',
       })

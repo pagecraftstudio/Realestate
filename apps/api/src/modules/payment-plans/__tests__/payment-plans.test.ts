@@ -175,7 +175,7 @@ describe('createPaymentPlan', () => {
     await expect(
       createPaymentPlan(adminActor, {
         dealId: DEAL_ID, totalAmount: 1_000_000, downPayment: 0,
-        installmentCount: 4, frequencyMonths: 1, startDate: '2026-09-01T00:00:00.000Z',
+        installmentCount: 4, frequencyMonths: 1, handoverAmount: 0, startDate: '2026-09-01T00:00:00.000Z',
       }),
     ).rejects.toThrow(NotFoundError)
   })
@@ -186,7 +186,7 @@ describe('createPaymentPlan', () => {
     await expect(
       createPaymentPlan(adminActor, {
         dealId: DEAL_ID, totalAmount: 1_000_000, downPayment: 0,
-        installmentCount: 4, frequencyMonths: 1, startDate: '2026-09-01T00:00:00.000Z',
+        installmentCount: 4, frequencyMonths: 1, handoverAmount: 0, startDate: '2026-09-01T00:00:00.000Z',
       }),
     ).rejects.toThrow(ConflictError)
   })
@@ -210,7 +210,7 @@ describe('createPaymentPlan', () => {
     await expect(
       createPaymentPlan(adminActor, {
         dealId: DEAL_ID, totalAmount: 1_000_000, downPayment: 0,
-        installmentCount: 4, frequencyMonths: 1, startDate: '2026-09-01T00:00:00.000Z',
+        installmentCount: 4, frequencyMonths: 1, handoverAmount: 0, startDate: '2026-09-01T00:00:00.000Z',
       }),
     ).rejects.toThrow(ConflictError)
   })

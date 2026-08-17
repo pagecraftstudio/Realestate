@@ -205,7 +205,7 @@ function validateEnv() {
     console.warn('[startup] UPSTASH_REDIS_REST_URL/TOKEN not set — rate limiting disabled')
   }
 
-  const insecureDefaults = [
+  const insecureDefaults: [string, string][] = [
     ['COOKIE_SECRET', 'dev-cookie-secret-change-in-prod'],
     ['JWT_SECRET',    'dev-jwt-secret-change-in-prod'],
   ]

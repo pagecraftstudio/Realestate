@@ -101,7 +101,9 @@ import * as storage from '../../../lib/storage.js'
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const actor = {
+  id:             'user1',
   userId:         'user1',
+  supabaseUid:    'sb-test-uid',
   organizationId: 'org1',
   role:           'COMPANY_ADMIN' as const,
   email:          'admin@test.com',

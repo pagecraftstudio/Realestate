@@ -114,6 +114,7 @@ export async function registerOrg(input: RegisterOrgInput) {
         id:             userId,
         organizationId: orgId,
         email:          input.email.toLowerCase(),
+        passwordHash:   '',          // Supabase Auth manages passwords — placeholder
         role:           UserRole.COMPANY_ADMIN,
         status:         UserStatus.ACTIVE,
         emailVerified:  true,

@@ -1,13 +1,3 @@
-/**
- * authenticate middleware — Supabase Auth JWT verification.
- *
- * Flow:
- *   1. Extract Bearer token from Authorization header
- *   2. Verify with Supabase Admin (supabaseAdmin.auth.getUser)
- *   3. Look up app user by email (schema has no authUserId column)
- *   4. Build AuthUser and set on request.authUser
- */
-
 import type { FastifyRequest, FastifyReply } from 'fastify'
 import { verifySupabaseToken } from '../lib/supabase.js'
 import { prisma } from '../lib/prisma.js'
@@ -17,8 +7,6 @@ import type { UserRole } from '@prisma/client'
 declare module 'fastify' {
   interface FastifyRequest {
     authUser?: AuthUser
-    // compat alias used by some older modules
-    user?: AuthUser
   }
 }
 
@@ -34,43 +22,28 @@ export async function authenticate(
 
     const accessToken = authHeader.slice(7)
 
-    // Verify with Supabase — returns auth.users row
     const supabaseUser = await verifySupabaseToken(accessToken)
     if (!supabaseUser) {
       return reply.status(401).send({ error: 'Invalid or expired token' })
     }
 
-    // Look up app user by email (organizationId+email is unique)
     const appUser = await prisma.user.findFirst({
-      where: {
-        email:  supabaseUser.email ?? '',
-        status: 'ACTIVE',
-      },
-      select: {
-        id:             true,
-        organizationId: true,
-        role:           true,
-        status:         true,
-      },
+      where: { email: supabaseUser.email ?? '', status: 'ACTIVE' },
+      select: { id: true, organizationId: true, role: true },
     })
 
     if (!appUser) {
       return reply.status(401).send({ error: 'User account not found or inactive' })
     }
 
-    const authUser: AuthUser = {
+    request.authUser = {
       id:             appUser.id,
-      userId:         appUser.id,   // alias — same value
+      userId:         appUser.id,
       organizationId: appUser.organizationId,
       role:           appUser.role as UserRole,
       supabaseUid:    supabaseUser.id,
     }
 
-    request.authUser = authUser
-    // compat alias
-    request.user = authUser
-
-    // Fire-and-forget lastLoginAt update (field exists on User model)
     prisma.user.update({
       where: { id: appUser.id },
       data:  { lastLoginAt: new Date() },
