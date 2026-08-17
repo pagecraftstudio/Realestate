@@ -107,8 +107,9 @@ export async function buildApp() {
     try {
       await prisma.$queryRaw`SELECT 1`
       checks['db'] = 'ok'
-    } catch {
+    } catch (err) {
       checks['db'] = 'error'
+      checks['dbError'] = (err as Error)?.message ?? String(err)
       healthy = false
     }
 
