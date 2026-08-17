@@ -18,7 +18,7 @@
 import type { FastifyInstance } from 'fastify'
 import { authenticate } from '../../middleware/authenticate.js'
 import { requirePermission } from '../../middleware/rbac.js'
-import { UserRole } from '@prisma/client'
+import { UserRole } from '../../lib/enums.js'
 import {
   dashboardQuerySchema,
   funnelQuerySchema,

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ProjectStatus, PropertyType } from '@prisma/client'
+import { ProjectStatus, PropertyType } from '../../lib/enums.js'
 
 // ─── Create Project ───────────────────────────────────────────────────────────
 

@@ -1,5 +1,6 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../../lib/prisma.js'
-import { CommissionStatus, DealStatus, UserRole, Prisma } from '@prisma/client'
+import { CommissionStatus, DealStatus, UserRole} from '../../lib/enums.js'
 import type { AuthUser } from '../../types/auth.js'
 import type {
   CreateCommissionRuleInput,
@@ -122,7 +123,7 @@ export async function createCommissionRule(
 ) {
   assertAdmin(actor)
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // If new rule is default, unset current default
     if (input.isDefault) {
       await tx.commissionRule.updateMany({
@@ -133,7 +134,7 @@ export async function createCommissionRule(
 
     const { conditions: rawConditions, ...restInput } = input
     return tx.commissionRule.create({
-      data: { ...restInput, organizationId: actor.organizationId, conditions: (rawConditions ?? {}) as Prisma.InputJsonValue },
+      data: { ...restInput, organizationId: actor.organizationId, conditions: (rawConditions ?? {}) as unknown },
       select: ruleSelect(),
     })
   })
@@ -180,7 +181,7 @@ export async function updateCommissionRule(
   })
   if (!rule) throw new NotFoundError('Commission rule not found')
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     if (input.isDefault) {
       await tx.commissionRule.updateMany({
         where: { organizationId: actor.organizationId, isDefault: true, id: { not: id } },
@@ -190,7 +191,7 @@ export async function updateCommissionRule(
     const { conditions: updConditions, ...restUpdate } = input
     return tx.commissionRule.update({
       where: { id },
-      data: updConditions !== undefined ? { ...restUpdate, conditions: updConditions as Prisma.InputJsonValue } : restUpdate,
+      data: updConditions !== undefined ? { ...restUpdate, conditions: updConditions as unknown } : restUpdate,
       select: ruleSelect(),
     })
   })

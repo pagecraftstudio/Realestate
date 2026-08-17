@@ -2,7 +2,7 @@ import type { FastifyRequest, FastifyReply } from 'fastify'
 import { verifySupabaseToken } from '../lib/supabase.js'
 import { prisma } from '../lib/prisma.js'
 import type { AuthUser } from '../types/auth.js'
-import type { UserRole } from '@prisma/client'
+import type { UserRole } from '../lib/enums.js'
 
 declare module 'fastify' {
   interface FastifyRequest {

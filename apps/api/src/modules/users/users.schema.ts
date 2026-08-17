@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { UserRole, UserStatus } from '@prisma/client'
+import { UserRole, UserStatus } from '../../lib/enums.js'
 
 // ─── Invite User ──────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client'
+import { UserRole } from './enums.js'
 
 // ─── Resource × Action matrix ────────────────────────────────────────────────
 // Deny by default. Explicit allow per role × resource × action.

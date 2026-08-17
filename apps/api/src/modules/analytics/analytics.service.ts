@@ -9,7 +9,7 @@
  */
 
 import { prisma } from '../../lib/prisma.js'
-import { UserRole, DealStatus, LeadStatus, ViewingStatus, ReservationStatus, CommissionStatus, InstallmentStatus } from '@prisma/client'
+import { UserRole, DealStatus, LeadStatus, ViewingStatus, ReservationStatus, CommissionStatus, InstallmentStatus } from '../../lib/enums.js'
 import type { AuthUser } from '../../types/auth.js'
 import type {
   DashboardQuery,

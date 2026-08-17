@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ViewingStatus } from '@prisma/client'
+import { ViewingStatus } from '../../lib/enums.js'
 
 // ─── Create ───────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-import type { UserRole } from '@prisma/client'
+import type { UserRole } from '../lib/enums.js'
 
 // ─── Legacy JWT payloads (kept for reference only) ────────────────────────────
 

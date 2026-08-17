@@ -10,7 +10,7 @@ import {
   ConflictError,
   ForbiddenError,
 } from '../reservations.service.js'
-import { ReservationStatus, UnitStatus, UserRole } from '@prisma/client'
+import { ReservationStatus, UnitStatus, UserRole } from '../../lib/enums.js'
 
 // ─── Prisma mock ──────────────────────────────────────────────────────────────
 

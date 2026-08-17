@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { TaskPriority, TaskStatus, UserRole } from '@prisma/client'
+import { TaskPriority, TaskStatus, UserRole } from '../../lib/enums.js'
 import type { CreateTaskInput, UpdateTaskInput, ListTasksQuery } from './tasks.schema.js'
 
 // ─── Errors ───────────────────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { DealStatus, PipelineStage, ReservationStatus, UnitStatus, UserRole } from '@prisma/client'
+import { DealStatus, PipelineStage, ReservationStatus, UnitStatus, UserRole } from '../../lib/enums.js'
 import type {
   CreateDealInput,
   UpdateDealInput,
@@ -58,7 +59,7 @@ async function generateDealNumber(orgId: string): Promise<string> {
   // bigint required by pg_advisory_xact_lock — derive from orgId chars
   const lockKey = BigInt('0x' + Buffer.from(orgId).toString('hex').slice(0, 15))
 
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // Acquire advisory lock for this org (released automatically at tx end)
     await tx.$executeRawUnsafe(`SELECT pg_advisory_xact_lock(${lockKey})`)
     const count = await tx.deal.count({ where: { organizationId: orgId } })
@@ -121,7 +122,7 @@ function dealSelect() {
  * Otherwise: unit must be AVAILABLE or RESERVED; sets unit → RESERVED.
  */
 export async function createDeal(actor: AuthUser, input: CreateDealInput) {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // Verify customer
     const customer = await tx.customer.findFirst({
       where: { id: input.customerId, organizationId: actor.organizationId },
@@ -300,7 +301,7 @@ export async function updateDealStatus(
     throw new ForbiddenError('Agents cannot change deal status.')
   }
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const existing = await tx.deal.findFirst({
       where: { id, organizationId: actor.organizationId },
     })

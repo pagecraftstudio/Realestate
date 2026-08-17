@@ -21,7 +21,7 @@ import {
 } from './users.service.js'
 import type { AuthUser } from '../../types/auth.js'
 import { z } from 'zod'
-import { UserStatus } from '@prisma/client'
+import { UserStatus } from '../../lib/enums.js'
 
 function auth(request: Parameters<typeof authenticate>[0]): AuthUser {
   return (request as typeof request & { authUser: AuthUser }).authUser

@@ -16,7 +16,7 @@ import type {
   UpdateDocumentInput,
   DownloadQuery,
 } from './documents.schema.js'
-import { DocumentRelatedType } from '@prisma/client'
+import { DocumentRelatedType } from '../../lib/enums.js'
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
 

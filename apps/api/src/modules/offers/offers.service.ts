@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { OfferStatus, UserRole, UnitStatus } from '@prisma/client'
+import { OfferStatus, UserRole, UnitStatus } from '../../lib/enums.js'
 import type {
   CreateOfferInput,
   UpdateOfferInput,

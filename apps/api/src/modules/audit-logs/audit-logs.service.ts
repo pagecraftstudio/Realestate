@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { UserRole } from '@prisma/client'
+import { UserRole } from '../../lib/enums.js'
 import type { ListAuditLogsQuery } from './audit-logs.schema.js'
 
 // ─── Errors ───────────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { UserRole, ViewingStatus } from '@prisma/client'
+import { UserRole, ViewingStatus } from '../../lib/enums.js'
 import type {
   CreateViewingInput,
   UpdateViewingInput,
