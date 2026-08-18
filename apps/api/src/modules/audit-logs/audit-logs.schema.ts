@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AuditAction } from '../../lib/enums.js'
+import { AuditAction } from '@prisma/client'
 
 export const listAuditLogsQuerySchema = z.object({
   page:       z.coerce.number().int().positive().default(1),

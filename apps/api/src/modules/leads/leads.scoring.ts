@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma.js'
-import type { LeadTemperature } from '../../lib/enums.js'
+import type { LeadTemperature } from '@prisma/client'
 
 // ─── Default scoring signals ──────────────────────────────────────────────────
 // These apply when no org-specific rules exist.

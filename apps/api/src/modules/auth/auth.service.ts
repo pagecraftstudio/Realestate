@@ -1,4 +1,3 @@
-import type { Prisma } from '@prisma/client'
 /**
  * Phase E — Auth Service (Supabase Auth)
  *
@@ -42,7 +41,7 @@ import type {
   LoginInput,
   ChangePasswordInput,
 } from './auth.schema.js'
-import { UserRole, UserStatus, OrgStatus, Plan } from '../../lib/enums.js'
+import { UserRole, UserStatus, OrgStatus, Plan } from '@prisma/client'
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
 
@@ -99,7 +98,7 @@ export async function registerOrg(input: RegisterOrgInput) {
   })
 
   // 4. Create org + app user in a transaction
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  await prisma.$transaction(async (tx) => {
     await tx.organization.create({
       data: {
         id:     orgId,

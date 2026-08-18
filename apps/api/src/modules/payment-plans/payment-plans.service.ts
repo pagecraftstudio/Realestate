@@ -1,6 +1,5 @@
-import type { Prisma } from '@prisma/client'
 import { prisma } from '../../lib/prisma.js'
-import { DealStatus, InstallmentStatus, UserRole } from '../../lib/enums.js'
+import { DealStatus, InstallmentStatus, UserRole } from '@prisma/client'
 import type { AuthUser } from '../../types/auth.js'
 import type {
   CreatePaymentPlanInput,
@@ -201,7 +200,7 @@ export async function createPaymentPlan(
   )
 
   // Create plan + installments in transaction
-  const plan = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const plan = await prisma.$transaction(async (tx) => {
     const p = await tx.paymentPlan.create({
       data: {
         dealId:           input.dealId,
@@ -399,7 +398,7 @@ export async function recordPayment(actor: AuthUser, input: RecordPaymentInput) 
     }
   }
 
-  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  return prisma.$transaction(async (tx) => {
     // Record payment
     const payment = await tx.payment.create({
       data: {
@@ -450,7 +449,7 @@ export async function recordPayment(actor: AuthUser, input: RecordPaymentInput) 
  * If all installments are PAID (and there are some), mark deal COMPLETED.
  */
 async function _checkAndCompleteDeal(
-  tx: Prisma.TransactionClient,
+  tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
   dealId: string,
   orgId: string,
 ) {
@@ -520,7 +519,7 @@ export async function voidPayment(actor: AuthUser, id: string, reason: string) {
     throw new ConflictError('Only COMPLETED payments can be voided')
   }
 
-  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  return prisma.$transaction(async (tx) => {
     // Mark payment refunded
     const updated = await tx.payment.update({
       where: { id },

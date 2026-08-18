@@ -109,9 +109,7 @@ export async function buildApp() {
       checks['db'] = 'ok'
     } catch (err) {
       checks['db'] = 'error'
-      const e = err as Record<string, unknown>
-      checks['dbError'] = String(e?.message ?? e?.code ?? JSON.stringify(err))
-      checks['dbCode']  = String(e?.code ?? 'unknown')
+      checks['dbError'] = (err as Error)?.message ?? String(err)
       healthy = false
     }
 

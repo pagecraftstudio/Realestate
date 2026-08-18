@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { UnitStatus, UnitType, PropertyType, UnitFinishing } from '../../lib/enums.js'
+import { UnitStatus, UnitType, PropertyType, UnitFinishing } from '@prisma/client'
 
 // ─── Create Unit ──────────────────────────────────────────────────────────────
 

@@ -7,7 +7,7 @@ import {
   PurchasePurpose,
   FinancingPreference,
   UserRole,
-} from '../../lib/enums.js'
+} from '@prisma/client'
 
 // ─── Create Lead ──────────────────────────────────────────────────────────────
 

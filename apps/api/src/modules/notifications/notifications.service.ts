@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { NotificationType, UserRole } from '../../lib/enums.js'
+import { NotificationType, UserRole , Prisma} from '@prisma/client'
 import type {
   ListNotificationsQuery,
   MarkReadInput,
@@ -131,7 +131,7 @@ export async function createNotification(
       type:           input.type as NotificationType,
       title:          input.title,
       body:           input.body,
-      payload:        (input.payload ?? {}) as any,
+      payload:        (input.payload ?? {}) as Prisma.InputJsonValue,
     },
     select: notifSelect(),
   })
@@ -156,7 +156,7 @@ export async function emitNotification(params: {
       type:           params.type,
       title:          params.title,
       body:           params.body,
-      payload:        (params.payload ?? {}) as any,
+      payload:        (params.payload ?? {}) as Prisma.InputJsonValue,
     },
     select: notifSelect(),
   })

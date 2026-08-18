@@ -1,7 +1,6 @@
-import type { Prisma } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { prisma } from '../../lib/prisma.js'
-import { UserRole, UserStatus } from '../../lib/enums.js'
+import { UserRole, UserStatus } from '@prisma/client'
 import type {
   InviteUserInput,
   UpdateUserInput,
@@ -144,7 +143,7 @@ export async function inviteUser(actor: AuthUser, input: InviteUserInput) {
 
   const passwordHash = await bcrypt.hash(input.temporaryPassword, BCRYPT_ROUNDS)
 
-  const user = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const user = await prisma.$transaction(async (tx) => {
     const newUser = await tx.user.create({
       data: {
         organizationId: actor.organizationId,

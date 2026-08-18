@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { CommunicationChannel, CommunicationDirection } from '../../lib/enums.js'
+import { CommunicationChannel, CommunicationDirection , Prisma} from '@prisma/client'
 import { getWhatsAppProvider } from '../../lib/whatsapp/index.js'
 import type { WhatsAppMessage, DeliveryStatus } from '../../lib/whatsapp/index.js'
 import type {
@@ -69,7 +69,7 @@ export async function logCommunication(actor: AuthUser, input: LogCommunicationI
       subject:        input.subject,
       content:        input.content,
       attachmentUrls: input.attachmentUrls,
-      metadata:       input.metadata !== undefined ? (input.metadata as any) : undefined,
+      metadata:       input.metadata !== undefined ? (input.metadata as Prisma.InputJsonValue) : undefined,
       sentAt:         input.sentAt ? new Date(input.sentAt) : new Date(),
     },
     select: commSelect(),
@@ -87,7 +87,7 @@ export async function logCommunication(actor: AuthUser, input: LogCommunicationI
           channel:   input.channel,
           direction: input.direction,
           commId:    comm.id,
-        } as any,
+        } as Prisma.InputJsonValue,
       },
     })
 
@@ -148,7 +148,7 @@ export async function sendWhatsAppText(actor: AuthUser, input: SendWhatsAppTextI
       channel:        CommunicationChannel.WHATSAPP,
       direction:      CommunicationDirection.OUTBOUND,
       content:        input.message,
-      metadata:       { messageId, provider: provider.name } as any,
+      metadata:       { messageId, provider: provider.name } as Prisma.InputJsonValue,
       sentAt:         new Date(),
     },
     select: commSelect(),
@@ -174,7 +174,7 @@ export async function sendWhatsAppTemplate(actor: AuthUser, input: SendWhatsAppT
       channel:        CommunicationChannel.WHATSAPP,
       direction:      CommunicationDirection.OUTBOUND,
       subject:        input.templateName,
-      metadata:       { messageId, provider: provider.name, templateName: input.templateName } as any,
+      metadata:       { messageId, provider: provider.name, templateName: input.templateName } as Prisma.InputJsonValue,
       sentAt:         new Date(),
     },
     select: commSelect(),
@@ -225,7 +225,7 @@ export async function processInboundMessage(
         type:         message.type,
         mediaUrl:     message.mediaUrl,
         rawTimestamp: message.timestamp.toISOString(),
-      } as any,
+      } as Prisma.InputJsonValue,
       sentAt: message.timestamp,
     },
   })

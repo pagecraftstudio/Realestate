@@ -11,7 +11,7 @@ import {
   NotFoundError,
   ConflictError,
 } from '../viewings.service.js'
-import { ViewingStatus, UserRole } from '../../lib/enums.js'
+import { ViewingStatus, UserRole } from '@prisma/client'
 
 // ─── Prisma mock ──────────────────────────────────────────────────────────────
 

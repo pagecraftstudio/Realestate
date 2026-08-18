@@ -1,7 +1,6 @@
-import type { Prisma } from '@prisma/client'
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { ReservationStatus, UnitStatus, UserRole } from '../../lib/enums.js'
+import { ReservationStatus, UnitStatus, UserRole } from '@prisma/client'
 import type {
   CreateReservationInput,
   UpdateReservationInput,
@@ -81,7 +80,7 @@ export async function createReservation(
   actor: AuthUser,
   input: CreateReservationInput,
 ) {
-  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  return prisma.$transaction(async (tx) => {
     // Lock unit row for update
     const unit = await tx.unit.findFirst({
       where: { id: input.unitId, organizationId: actor.organizationId },
@@ -208,7 +207,7 @@ export async function cancelReservation(
     throw new ForbiddenError('Agents cannot cancel reservations. Contact a manager.')
   }
 
-  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  return prisma.$transaction(async (tx) => {
     const existing = await tx.reservation.findFirst({
       where: { id, organizationId: actor.organizationId },
     })
@@ -243,7 +242,7 @@ export async function cancelReservation(
  * Reverts unit to AVAILABLE if still RESERVED.
  */
 export async function expireReservation(actor: AuthUser, id: string) {
-  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  return prisma.$transaction(async (tx) => {
     const existing = await tx.reservation.findFirst({
       where: { id, organizationId: actor.organizationId },
     })

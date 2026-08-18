@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify'
 import { prisma } from '../lib/prisma.js'
 import type { AuthUser } from '../types/auth.js'
-import type { AuditAction } from '../lib/enums.js'
+import type { AuditAction } from '@prisma/client'
 
 interface AuditOptions {
   action: AuditAction

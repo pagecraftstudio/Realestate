@@ -13,7 +13,7 @@ import {
   ConflictError,
   ForbiddenError,
 } from '../commissions.service.js'
-import { CommissionStatus, DealStatus, UserRole } from '../../lib/enums.js'
+import { CommissionStatus, DealStatus, UserRole } from '@prisma/client'
 
 // ─── Prisma mock ──────────────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma.js'
-import { UserRole, UserStatus } from '../../lib/enums.js'
+import { UserRole, UserStatus } from '@prisma/client'
 
 // ─── Round-robin state stored in org settings JSON ───────────────────────────
 
@@ -81,7 +81,7 @@ async function leastActiveLeads(organizationId: string, teamId?: string): Promis
   const countMap = new Map(counts.map((c) => [c.assignedAgentId!, c._count.assignedAgentId ?? 0]))
 
   // Sort agents by active lead count ascending, pick the least loaded
-  const sorted = agents.sort((a, b) => ((countMap.get(a.id) ?? 0) as number) - ((countMap.get(b.id) ?? 0) as number))
+  const sorted = agents.sort((a, b) => (countMap.get(a.id) ?? 0) - (countMap.get(b.id) ?? 0))
   return sorted[0]?.id ?? null
 }
 

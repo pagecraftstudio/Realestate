@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PropertyType, PurchasePurpose, FinancingPreference } from '../../lib/enums.js'
+import { PropertyType, PurchasePurpose, FinancingPreference } from '@prisma/client'
 
 // ─── Create Customer (standalone — not from lead conversion) ──────────────────
 

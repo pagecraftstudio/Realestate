@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { UserRole } from '../../lib/enums.js'
+import { UserRole } from '@prisma/client'
 import type { AuthUser } from '../../../types/auth.js'
 
 // ─── Mock prisma ──────────────────────────────────────────────────────────────

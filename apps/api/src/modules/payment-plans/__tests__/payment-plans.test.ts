@@ -15,7 +15,7 @@ import {
   ForbiddenError,
   ValidationError,
 } from '../payment-plans.service.js'
-import { DealStatus, InstallmentStatus, UserRole } from '../../lib/enums.js'
+import { DealStatus, InstallmentStatus, UserRole } from '@prisma/client'
 
 // ─── Prisma mock ──────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
 import type { AuthUser } from '../../types/auth.js'
-import { UserRole } from '../../lib/enums.js'
+import { UserRole , Prisma} from '@prisma/client'
 import type {
   CreateLeadInput,
   UpdateLeadInput,
@@ -153,7 +153,7 @@ export async function createLead(actor: AuthUser, data: CreateLeadInput) {
       payload: {
         source: data.source,
         assignedAgentId: data.assignedAgentId ?? null,
-      } as any,
+      } as Prisma.InputJsonValue,
     },
   })
 
@@ -345,7 +345,7 @@ export async function updateLead(actor: AuthUser, leadId: string, data: UpdateLe
         organizationId: actor.organizationId,
         actorId: actor.id,
         type: 'STATUS_CHANGED',
-        payload: { from: oldStatus, to: data.status } as any,
+        payload: { from: oldStatus, to: data.status } as Prisma.InputJsonValue,
       },
     })
   }
@@ -358,7 +358,7 @@ export async function updateLead(actor: AuthUser, leadId: string, data: UpdateLe
         organizationId: actor.organizationId,
         actorId: actor.id,
         type: 'TEMPERATURE_CHANGED',
-        payload: { from: oldTemperature, to: data.temperature } as any,
+        payload: { from: oldTemperature, to: data.temperature } as Prisma.InputJsonValue,
       },
     })
   }
@@ -429,7 +429,7 @@ export async function assignLead(actor: AuthUser, leadId: string, data: AssignLe
         previousAgentId,
         newAgentId: data.agentId,
         teamId: data.teamId ?? null,
-      } as any,
+      } as Prisma.InputJsonValue,
     },
   })
 
@@ -464,7 +464,7 @@ export async function addActivity(actor: AuthUser, leadId: string, data: AddActi
       organizationId: actor.organizationId,
       actorId: actor.id,
       type: data.type,
-      payload: data.payload as any,
+      payload: data.payload as Prisma.InputJsonValue,
     },
     select: {
       id: true,
@@ -552,7 +552,7 @@ export async function recalculateScore(actor: AuthUser, leadId: string): Promise
   // Evaluate signals
   let score = 0
   const addIf = (signal: string, condition: boolean) => {
-    if (condition && ruleMap[signal] !== undefined) score += ruleMap[signal]!
+    if (condition && ruleMap[signal] !== undefined) score += ruleMap[signal]
   }
 
   addIf('HAS_PHONE', Boolean(lead.phone))
@@ -587,7 +587,7 @@ export async function recalculateScore(actor: AuthUser, leadId: string): Promise
       organizationId: actor.organizationId,
       actorId: actor.id,
       type: 'SCORE_UPDATED',
-      payload: { score } as any,
+      payload: { score } as Prisma.InputJsonValue,
     },
   })
 
@@ -652,7 +652,7 @@ export async function convertToCustomer(actor: AuthUser, leadId: string, data: C
       organizationId: actor.organizationId,
       actorId: actor.id,
       type: 'CONVERTED_TO_CUSTOMER',
-      payload: { customerId: customer.id } as any,
+      payload: { customerId: customer.id } as Prisma.InputJsonValue,
     },
   })
 
