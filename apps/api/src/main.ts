@@ -51,7 +51,24 @@ export async function buildApp() {
 
   // ─── CORS ───────────────────────────────────────────────────────────────
   await fastify.register(fastifyCors, {
-    origin: process.env['CORS_ORIGIN']?.split(',') ?? ['http://localhost:3000'],
+    origin: (origin, cb) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return cb(null, true)
+
+      const allowed = [
+        /^https:\/\/[a-z0-9-]+-pagecraft-studio\.vercel\.app$/,
+        /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
+        /^http:\/\/localhost:\d+$/,
+      ]
+
+      // Also allow any origins explicitly listed in CORS_ORIGIN env var
+      const envOrigins = process.env['CORS_ORIGIN']?.split(',').map(o => o.trim()) ?? []
+      if (envOrigins.includes(origin)) return cb(null, true)
+
+      if (allowed.some(re => re.test(origin))) return cb(null, true)
+
+      cb(new Error('Not allowed by CORS'), false)
+    },
     credentials: true,
   })
 

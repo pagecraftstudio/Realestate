@@ -43,7 +43,9 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
       return reply.status(201).send(result)
     } catch (err) {
       if (err instanceof ConflictError) return reply.status(409).send({ error: err.message })
-      throw err
+      // Log full error for debugging
+      fastify.log.error({ err }, 'register error')
+      return reply.status(500).send({ error: 'Internal server error', detail: err instanceof Error ? err.message : String(err) })
     }
   })
 
