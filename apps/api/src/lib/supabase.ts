@@ -67,7 +67,7 @@ export const supabaseAdmin = new Proxy({} as SupabaseClient, {
  * Used in the authenticate middleware to replace @fastify/jwt verification.
  */
 export async function verifySupabaseToken(accessToken: string) {
-  const { data, error } = await supabaseAdmin.auth.getUser(accessToken)
+  const { data, error } = await getSupabaseAdmin().auth.getUser(accessToken)
   if (error || !data.user) return null
   return data.user
 }
@@ -81,7 +81,7 @@ export async function createAuthUser(params: {
   password: string
   metadata?: Record<string, unknown>
 }) {
-  const { data, error } = await supabaseAdmin.auth.admin.createUser({
+  const { data, error } = await getSupabaseAdmin().auth.admin.createUser({
     email:              params.email,
     password:           params.password,
     email_confirm:      true,      // skip email confirmation in CRM flow
@@ -96,7 +96,7 @@ export async function createAuthUser(params: {
  * Used when deactivating a CRM user account.
  */
 export async function deleteAuthUser(authUserId: string) {
-  const { error } = await supabaseAdmin.auth.admin.deleteUser(authUserId)
+  const { error } = await getSupabaseAdmin().auth.admin.deleteUser(authUserId)
   if (error) throw new Error(`Supabase Auth deleteUser failed: ${error.message}`)
 }
 

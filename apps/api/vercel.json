@@ -26,5 +26,5 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "installCommand": "pnpm install --frozen-lockfile"
+  "installCommand": "pnpm install --frozen-lockfile && pnpm --filter api exec prisma generate"
 }

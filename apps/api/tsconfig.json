@@ -3,10 +3,11 @@
     "target": "ES2022",
     "module": "CommonJS",
     "lib": [
-      "ES2022"
+      "ES2022",
+      "DOM"
     ],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -22,14 +23,14 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "api/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "src/**/__tests__/**",
     "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "api/**"
+    "src/**/*.spec.ts"
   ]
 }

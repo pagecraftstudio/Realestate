@@ -34,7 +34,7 @@
 
 import { nanoid } from 'nanoid'
 import { prisma } from '../../lib/prisma.js'
-import { supabaseAdmin, createAuthUser } from '../../lib/supabase.js'
+import { supabaseAdmin, getSupabaseAdmin, createAuthUser } from '../../lib/supabase.js'
 import { createClient } from '@supabase/supabase-js'
 import type {
   RegisterOrgInput,
@@ -133,7 +133,7 @@ export async function registerOrg(input: RegisterOrgInput) {
   })
 
   // 5. Sign in to get initial session
-  const { data: session, error: signInErr } = await supabaseAdmin.auth.admin.generateLink({
+  const { data: session, error: signInErr } = await getSupabaseAdmin().auth.admin.generateLink({
     type:  'magiclink',
     email: input.email.toLowerCase(),
   })
@@ -215,7 +215,7 @@ export async function login(input: LoginInput) {
 // ─── Logout (server-side) ─────────────────────────────────────────────────────
 
 export async function logout(supabaseUid: string): Promise<void> {
-  const { error } = await supabaseAdmin.auth.admin.signOut(supabaseUid)
+  const { error } = await getSupabaseAdmin().auth.admin.signOut(supabaseUid)
   if (error) {
     // Log but don't fail — token may already be expired
     console.warn('[auth] signOut warning:', error.message)
@@ -259,7 +259,7 @@ export async function changePassword(
   input: ChangePasswordInput,
 ): Promise<void> {
   // Supabase Admin API updates password directly
-  const { error } = await supabaseAdmin.auth.admin.updateUserById(supabaseUid, {
+  const { error } = await getSupabaseAdmin().auth.admin.updateUserById(supabaseUid, {
     password: input.newPassword,
   })
   if (error) throw new BadRequestError(`Password update failed: ${error.message}`)
@@ -269,7 +269,7 @@ export async function changePassword(
 
 export async function requestPasswordReset(email: string): Promise<void> {
   // Use Supabase's built-in password reset email
-  const { error } = await supabaseAdmin.auth.admin.generateLink({
+  const { error } = await getSupabaseAdmin().auth.admin.generateLink({
     type:  'recovery',
     email: email.toLowerCase(),
   })

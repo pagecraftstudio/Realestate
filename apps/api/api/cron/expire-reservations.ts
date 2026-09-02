@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     await prisma.$transaction(
-      expired.flatMap((r) => [
+      expired.flatMap((r: { id: string; unitId: string }) => [
         prisma.reservation.update({
           where: { id: r.id },
           data:  { status: 'EXPIRED' },
@@ -43,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     )
 
     console.info(`[cron] expired ${expired.length} reservations`)
-    return res.json({ expired: expired.length, ids: expired.map((r) => r.id) })
+    return res.json({ expired: expired.length, ids: expired.map((r: { id: string }) => r.id) })
   } catch (err) {
     console.error('[cron/expire-reservations]', err)
     return res.status(500).json({ error: 'Internal error' })

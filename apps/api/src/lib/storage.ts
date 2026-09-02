@@ -171,7 +171,7 @@ export async function fileExists(
     .list(folder, { search: filename })
 
   if (error) return false
-  return (data ?? []).some((f) => f.name === filename)
+  return (data ?? []).some((f: { name: string }) => f.name === filename)
 }
 
 // ─── Avatar upload (convenience) ──────────────────────────────────────────────
