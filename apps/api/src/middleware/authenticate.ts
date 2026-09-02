@@ -27,8 +27,15 @@ export async function authenticate(
       return reply.status(401).send({ error: 'Invalid or expired token' })
     }
 
+    // Look up by authUserId first (fast, unique), fall back to email
     const appUser = await prisma.user.findFirst({
-      where: { email: supabaseUser.email ?? '', status: 'ACTIVE' },
+      where: {
+        OR: [
+          { authUserId: supabaseUser.id },
+          { email: supabaseUser.email ?? '' },
+        ],
+        status: 'ACTIVE',
+      },
       select: { id: true, organizationId: true, role: true },
     })
 

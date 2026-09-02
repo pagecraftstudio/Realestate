@@ -358,9 +358,10 @@ model Organization {
 
 model User {
   id             String     @id @default(cuid())
+  authUserId     String?    @unique @map("auth_user_id")
   organizationId String
   email          String
-  passwordHash   String
+  passwordHash   String?    @map("password_hash")
   role           UserRole
   status         UserStatus @default(INVITED)
   emailVerified  Boolean    @default(false)

@@ -82,63 +82,97 @@ export async function registerOrg(input: RegisterOrgInput) {
   })
   if (emailExists) throw new ConflictError('Email already registered')
 
-  const orgId  = nanoid()
-  const userId = nanoid()
+  const orgId = nanoid()
 
-  // 3. Create Supabase Auth user first (so auth_user_id is available)
-  const authUser = await createAuthUser({
-    email:    input.email.toLowerCase(),
-    password: input.password,
-    metadata: {
-      organization_id: orgId,
-      role:            UserRole.COMPANY_ADMIN,
-      first_name:      input.firstName,
-      last_name:       input.lastName,
+  // 3. Create org FIRST so the DB trigger can reference it via FK
+  await prisma.organization.create({
+    data: {
+      id:     orgId,
+      name:   input.orgName,
+      slug:   input.orgSlug,
+      plan:   Plan.FREE,
+      status: OrgStatus.TRIAL,
     },
   })
 
-  // 4. Create org + app user in a transaction
-  await prisma.$transaction(async (tx) => {
-    await tx.organization.create({
-      data: {
-        id:     orgId,
-        name:   input.orgName,
-        slug:   input.orgSlug,
-        plan:   Plan.FREE,
-        status: OrgStatus.TRIAL,
+  let authUserId: string
+  try {
+    // 4. Create Supabase Auth user — the DB trigger (on_auth_user_created)
+    //    automatically inserts a row in public.users linked by auth_user_id.
+    //    Org must exist first (step 3) for the FK to succeed.
+    const authUser = await createAuthUser({
+      email:    input.email.toLowerCase(),
+      password: input.password,
+      metadata: {
+        organization_id: orgId,
+        role:            UserRole.COMPANY_ADMIN,
+        first_name:      input.firstName,
+        last_name:       input.lastName,
       },
     })
+    authUserId = authUser.id
+  } catch (err) {
+    // Roll back org creation if Supabase user creation fails
+    await prisma.organization.delete({ where: { id: orgId } }).catch(() => undefined)
+    throw err
+  }
 
-    await tx.user.create({
+  // 5. Find the user row created by the DB trigger and upsert profile
+  //    The trigger creates the user row; we just need to patch role/status
+  //    and create the profile.
+  const dbUser = await prisma.user.findFirst({
+    where: { authUserId },
+    select: { id: true },
+  })
+
+  if (!dbUser) {
+    // Trigger didn't fire (e.g. trigger not installed in this Supabase project).
+    // Create the user row manually as fallback.
+    const userId = nanoid()
+    await prisma.user.create({
       data: {
         id:             userId,
+        authUserId,
         organizationId: orgId,
         email:          input.email.toLowerCase(),
-        passwordHash:   '',          // Supabase Auth manages passwords — placeholder
+        passwordHash:   null,
         role:           UserRole.COMPANY_ADMIN,
         status:         UserStatus.ACTIVE,
         emailVerified:  true,
       },
     })
-
-    await tx.userProfile.create({
+    await prisma.userProfile.create({
       data: {
         id:        nanoid(),
-        userId:    userId,
+        userId,
         firstName: input.firstName,
         lastName:  input.lastName,
         phone:     input.phone ?? null,
       },
     })
-  })
+  } else {
+    // Trigger created the user — patch role/status and create profile
+    await prisma.user.update({
+      where: { id: dbUser.id },
+      data:  { role: UserRole.COMPANY_ADMIN, status: UserStatus.ACTIVE, emailVerified: true },
+    })
+    await prisma.userProfile.upsert({
+      where:  { userId: dbUser.id },
+      create: {
+        id:        nanoid(),
+        userId:    dbUser.id,
+        firstName: input.firstName,
+        lastName:  input.lastName,
+        phone:     input.phone ?? null,
+      },
+      update: {
+        firstName: input.firstName,
+        lastName:  input.lastName,
+        phone:     input.phone ?? null,
+      },
+    })
+  }
 
-  // 5. Sign in to get initial session
-  const { data: session, error: signInErr } = await getSupabaseAdmin().auth.admin.generateLink({
-    type:  'magiclink',
-    email: input.email.toLowerCase(),
-  })
-
-  // Return org info — client will do a login after registration
   return {
     organizationId: orgId,
     email:          input.email.toLowerCase(),
