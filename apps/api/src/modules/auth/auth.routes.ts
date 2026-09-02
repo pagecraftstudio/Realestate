@@ -37,15 +37,17 @@ import type { AuthUser } from '../../types/auth.js'
 export async function authRoutes(fastify: FastifyInstance): Promise<void> {
   // ─── POST /auth/register ──────────────────────────────────────────────────
   fastify.post('/register', async (request, reply) => {
-    const input = RegisterOrgSchema.parse(request.body)
     try {
+      const input = RegisterOrgSchema.parse(request.body)
       const result = await registerOrg(input)
       return reply.status(201).send(result)
     } catch (err) {
       if (err instanceof ConflictError) return reply.status(409).send({ error: err.message })
-      // Log full error for debugging
+      // Use console.error so it always appears in Vercel function logs
+      console.error('[register] error:', err)
       fastify.log.error({ err }, 'register error')
-      return reply.status(500).send({ error: 'Internal server error', detail: err instanceof Error ? err.message : String(err) })
+      const message = err instanceof Error ? err.message : String(err)
+      return reply.status(500).send({ error: 'Internal server error', detail: message })
     }
   })
 

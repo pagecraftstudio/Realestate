@@ -43,6 +43,7 @@ export function errorHandler(
   }
 
   // Unhandled — log + 500
+  console.error('[errorHandler] unhandled error:', error)
   request.log.error(error)
-  void reply.status(500).send({ error: 'Internal server error' })
+  void reply.status(500).send({ error: 'Internal server error', detail: error instanceof Error ? error.message : String(error) })
 }

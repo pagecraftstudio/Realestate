@@ -15,23 +15,43 @@ let _app: FastifyInstance | null = null
 
 async function getApp(): Promise<FastifyInstance> {
   if (_app) return _app
-  _app = await buildApp()
-  await _app.ready()
+  try {
+    _app = await buildApp()
+    await _app.ready()
+  } catch (err) {
+    console.error('[vercel] buildApp failed:', err)
+    _app = null
+    throw err
+  }
   return _app
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const app = await getApp()
+  let app: FastifyInstance
+  try {
+    app = await getApp()
+  } catch (err) {
+    console.error('[vercel] handler: getApp error:', err)
+    res.status(500).json({ error: 'Server initialization failed', detail: err instanceof Error ? err.message : String(err) })
+    return
+  }
 
   // Convert Vercel request to Fastify inject payload
   const rawBody = await getRawBody(req)
 
-  const response = await app.inject({
-    method: req.method as any,
-    url: req.url ?? '/',
-    headers: req.headers as Record<string, string>,
-    payload: rawBody,
-  })
+  let response
+  try {
+    response = await app.inject({
+      method: req.method as any,
+      url: req.url ?? '/',
+      headers: req.headers as Record<string, string>,
+      payload: rawBody,
+    })
+  } catch (err) {
+    console.error('[vercel] handler: inject error:', err)
+    res.status(500).json({ error: 'Request processing failed', detail: err instanceof Error ? err.message : String(err) })
+    return
+  }
 
   // Forward status + headers
   res.status(response.statusCode)
