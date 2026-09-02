@@ -38,10 +38,10 @@ export async function middleware(req: NextRequest) {
     },
   )
 
-  // getUser validates the JWT with Supabase Auth (not just local cookie parse)
-  const { data: { user } } = await supabase.auth.getUser()
+  // getSession parses JWT locally — no network call, safe for middleware
+  const { data: { session } } = await supabase.auth.getSession()
 
-  if (!user) {
+  if (!session) {
     const loginUrl = new URL('/login', req.url)
     loginUrl.searchParams.set('from', pathname)
     return NextResponse.redirect(loginUrl)
