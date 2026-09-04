@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize }
-import { randomUUID } from 'crypto' from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize } from '@/lib/server/api-helpers'
+import { randomUUID } from 'crypto'
 
 export async function GET(req: NextRequest) {
   const user = await getAuthUser()
