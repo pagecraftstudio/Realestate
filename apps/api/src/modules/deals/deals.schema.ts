@@ -68,7 +68,7 @@ export const listDealsQuerySchema = z.object({
   unitId:        z.string().cuid().optional(),
   agentId:       z.string().cuid().optional(),
   managerId:     z.string().cuid().optional(),
-  status:        z.enum(DEAL_STATUSES).optional(),
+  status:        z.enum(DEAL_STATUSES).optional().catch(undefined),
   pipelineStage: z.enum(PIPELINE_STAGES).optional(),
   page:          z.coerce.number().int().positive().default(1),
   limit:         z.coerce.number().int().positive().max(100).default(20),
