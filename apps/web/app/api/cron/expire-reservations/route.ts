@@ -1,7 +1,6 @@
 /**
- * Vercel Cron — expires overdue reservations every 5 minutes.
- * Add to apps/web/vercel.json:
- *   "crons": [{ "path": "/api/cron/expire-reservations", "schedule": "*/5 * * * *" }]
+ * Vercel Cron — expires overdue reservations daily.
+ * Schedule: "0 0 * * *" (midnight UTC)
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/server/api-helpers'
