@@ -87,8 +87,16 @@ export function conflict(msg: string) {
 }
 
 export function serverError(err: unknown) {
-  const msg = err instanceof Error ? err.message : String(err)
-  console.error('[api]', msg)
+  let msg: string
+  if (err instanceof Error) {
+    msg = err.message
+  } else if (err && typeof err === 'object') {
+    const e = err as Record<string, unknown>
+    msg = (e["message"] as string) ?? (e["details"] as string) ?? (e["hint"] as string) ?? (e["code"] as string) ?? JSON.stringify(err)
+  } else {
+    msg = String(err)
+  }
+  console.error('[api]', msg, JSON.stringify(err))
   return NextResponse.json({ error: 'Internal server error', detail: msg }, { status: 500 })
 }
 
