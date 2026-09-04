@@ -61,11 +61,21 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
 
       if (actor.role === AGENT_ROLE) {
         const query = agentDashboardQuerySchema.parse(request.query)
-        return getAgentDashboard(actor, query)
+        try {
+          return getAgentDashboard(actor, query)
+        } catch (err) {
+          console.error('[analytics/getAgentDashboard] error:', err)
+          throw err
+        }
       }
 
       const query = dashboardQuerySchema.parse(request.query)
-      return getDashboardKpis(actor, query)
+      try {
+        return getDashboardKpis(actor, query)
+      } catch (err) {
+        console.error('[analytics/getDashboardKpis] error:', err)
+        throw err
+      }
     },
   )
 
@@ -82,7 +92,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
         query.agentId = actor.userId
       }
 
-      return getSalesFunnel(actor, query)
+      try {
+        return getSalesFunnel(actor, query)
+      } catch (err) {
+        console.error('[analytics/getSalesFunnel] error:', err)
+        throw err
+      }
     },
   )
 
@@ -93,7 +108,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = revenueChartQuerySchema.parse(request.query)
-      return getRevenueChart(actor, query)
+      try {
+        return getRevenueChart(actor, query)
+      } catch (err) {
+        console.error('[analytics/getRevenueChart] error:', err)
+        throw err
+      }
     },
   )
 
@@ -104,7 +124,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = leadsOverTimeQuerySchema.parse(request.query)
-      return getLeadsOverTime(actor, query)
+      try {
+        return getLeadsOverTime(actor, query)
+      } catch (err) {
+        console.error('[analytics/getLeadsOverTime] error:', err)
+        throw err
+      }
     },
   )
 
@@ -115,7 +140,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = leadSourceQuerySchema.parse(request.query)
-      return getLeadSourceBreakdown(actor, query)
+      try {
+        return getLeadSourceBreakdown(actor, query)
+      } catch (err) {
+        console.error('[analytics/getLeadSourceBreakdown] error:', err)
+        throw err
+      }
     },
   )
 
@@ -132,7 +162,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
         rawQuery.agentId = actor.userId
       }
 
-      return getAgentPerformance(actor, rawQuery)
+      try {
+        return getAgentPerformance(actor, rawQuery)
+      } catch (err) {
+        console.error('[analytics/getAgentPerformance] error:', err)
+        throw err
+      }
     },
   )
 
@@ -143,7 +178,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = propertyPerformanceQuerySchema.parse(request.query)
-      return getPropertyPerformance(actor, query)
+      try {
+        return getPropertyPerformance(actor, query)
+      } catch (err) {
+        console.error('[analytics/getPropertyPerformance] error:', err)
+        throw err
+      }
     },
   )
 
@@ -152,14 +192,24 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     '/pipeline',
     { preHandler: [authenticate, requirePermission('analytics', 'read')] },
     async (request, reply) => {
-      const actor = (request as typeof request & { authUser: AuthUser }).authUser
-      const rawQuery = pipelineQuerySchema.parse(request.query)
+      try {
+        const actor = (request as typeof request & { authUser: AuthUser }).authUser
+        const rawQuery = pipelineQuerySchema.parse(request.query)
 
-      if (actor.role === AGENT_ROLE) {
-        rawQuery.agentId = actor.userId
+        if (actor.role === AGENT_ROLE) {
+          rawQuery.agentId = actor.userId
+        }
+
+        try {
+          return getPipelineSummary(actor, rawQuery)
+        } catch (err) {
+          console.error('[analytics/getPipelineSummary] error:', err)
+          throw err
+        }
+      } catch (err) {
+        console.error('[analytics/pipeline] error:', err)
+        throw err
       }
-
-      return getPipelineSummary(actor, rawQuery)
     },
   )
 
@@ -170,7 +220,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = financialSummaryQuerySchema.parse(request.query)
-      return getFinancialSummary(actor, query)
+      try {
+        return getFinancialSummary(actor, query)
+      } catch (err) {
+        console.error('[analytics/getFinancialSummary] error:', err)
+        throw err
+      }
     },
   )
 
@@ -182,7 +237,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = dateRangeSchema.parse(request.query)
-      return getSalesByAgent(actor, query)
+      try {
+        return getSalesByAgent(actor, query)
+      } catch (err) {
+        console.error('[analytics/getSalesByAgent] error:', err)
+        throw err
+      }
     },
   )
 
@@ -192,7 +252,12 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const actor = (request as typeof request & { authUser: AuthUser }).authUser
       const query = dateRangeSchema.parse(request.query)
-      return getSalesBySource(actor, query)
+      try {
+        return getSalesBySource(actor, query)
+      } catch (err) {
+        console.error('[analytics/getSalesBySource] error:', err)
+        throw err
+      }
     },
   )
 }

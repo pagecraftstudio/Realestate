@@ -693,6 +693,8 @@ export async function getPipelineSummary(actor: AuthUser, query: PipelineQuery) 
   const orgId = actor.organizationId
   const agentFilter = query.agentId ? { agentId: query.agentId } : {}
 
+  console.log('[getPipelineSummary] orgId:', orgId, 'agentFilter:', agentFilter)
+
   const groups = await prisma.deal.groupBy({
     by: ['pipelineStage'],
     where: {

@@ -73,6 +73,19 @@ export async function buildApp() {
   })
 
   // ─── Rate limiting ──────────────────────────────────────────────────────
+  // ─── Decimal serialization ─────────────────────────────────────────────
+  // Prisma returns Decimal objects for @db.Decimal fields. Convert them to
+  // plain JS numbers in every JSON response so the frontend receives numbers.
+  fastify.addHook('preSerialization', async (_req, _reply, payload) => {
+    return JSON.parse(JSON.stringify(payload, (_key, value) => {
+      // Prisma Decimal objects have a toFixed method and are not plain numbers
+      if (value !== null && typeof value === 'object' && typeof value.toFixed === 'function') {
+        return Number(value)
+      }
+      return value
+    }))
+  })
+
   // Upstash rate limiting (serverless-safe, replaces @fastify/rate-limit + ioredis)
   fastify.addHook('onRequest', async (request, reply) => {
     const limiter = getRatelimiter()

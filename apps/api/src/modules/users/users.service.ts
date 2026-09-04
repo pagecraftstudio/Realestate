@@ -53,6 +53,13 @@ function userSelect() {
         team: { select: { id: true, name: true } },
       },
     },
+    _count: {
+      select: {
+        assignedLeads: true,
+        agentDeals:    true,
+        agentViewings: true,
+      },
+    },
   } as const
 }
 

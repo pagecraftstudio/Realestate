@@ -23,7 +23,7 @@ export interface TeamMember {
     avatarUrl: string | null
   } | null
   team: { id: string; name: string } | null
-  _count: { assignedLeads: number }
+  _count?: { assignedLeads: number; agentDeals?: number; agentViewings?: number }
 }
 
 export interface Team {

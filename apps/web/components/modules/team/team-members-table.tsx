@@ -113,7 +113,7 @@ export function TeamMembersTable() {
                       {m.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{m._count.assignedLeads}</td>
+                  <td className="px-4 py-3 text-zinc-500">{m._count?.assignedLeads ?? 0}</td>
                   <td className="px-4 py-3 text-zinc-500 text-xs">{m.team?.name ?? '—'}</td>
                   <td className="px-4 py-3 text-right">
                     <DeactivateBtn userId={m.id} status={m.status} />

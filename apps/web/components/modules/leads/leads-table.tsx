@@ -85,7 +85,7 @@ export function LeadsTable({ leads, loading }: Props) {
                   <ScoreBadge score={lead.leadScore} />
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {lead.source.replace(/_/g, ' ')}
+                  {(lead.source ?? '').replace(/_/g, ' ')}
                 </td>
                 <td className="px-4 py-3">
                   <AgentAvatar agent={lead.assignedAgent} showName size="sm" />
