@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   if (p.get('pipelineStage')) query = query.eq('pipeline_stage', p.get('pipelineStage')!)
   if (p.get('agentId'))       query = query.eq('agent_id', p.get('agentId')!)
   if (p.get('customerId'))    query = query.eq('customer_id', p.get('customerId')!)
-  if (p.get('search'))        query = query.ilike('title', `%${p.get('search')}%`)
+  if (p.get('search'))        query = query.ilike('deal_number', `%${p.get('search')}%`)
 
   const { data, count, error } = await query
   if (error) return serverError(error)

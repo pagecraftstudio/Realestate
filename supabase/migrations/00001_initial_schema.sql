@@ -301,6 +301,7 @@ create table leads (
   financing_preference  financing_preference_enum,
 
   notes                 text,
+  is_archived           boolean not null default false,
   next_followup_at      timestamptz,
   last_contacted_at     timestamptz,
   converted_at          timestamptz,
@@ -568,6 +569,7 @@ create table deals (
   manager_id          text  references users(id),
 
   deal_number         text  not null,
+  title               text,
   sale_price          numeric(15,2) not null,
   discount            numeric(15,2) not null default 0,
   net_sale_value      numeric(15,2) not null,
