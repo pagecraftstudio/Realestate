@@ -66,13 +66,16 @@ export async function getAuthUser(): Promise<AppUser | null> {
 
   if (!dbUser) return null
 
+  // Single-company mode: use ORG_ID env var if set, otherwise use user's org
+  const organizationId = process.env['ORG_ID'] ?? dbUser.organization_id
+
   const profile = (dbUser as any).user_profiles?.[0] ?? null
   return {
     id:             dbUser.id,
     authUserId:     user.id,
     email:          dbUser.email,
     role:           dbUser.role,
-    organizationId: dbUser.organization_id,
+    organizationId,
     profile: profile ? {
       firstName: profile.first_name,
       lastName:  profile.last_name,

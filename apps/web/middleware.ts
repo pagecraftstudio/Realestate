@@ -5,7 +5,7 @@
  */
 import { type NextRequest, NextResponse } from 'next/server'
 
-const PUBLIC_PATHS = ['/login', '/register', '/api/v1/auth/register', '/api/cron/']
+const PUBLIC_PATHS = ['/login', '/api/v1/auth/register', '/api/cron/']
 
 // Supabase stores the session in a cookie whose name starts with sb- and ends with -auth-token
 const SESSION_COOKIE_RE = /^sb-.+-auth-token$/
