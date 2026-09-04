@@ -15,7 +15,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     .single()
 
   if (error || !data) return notFound()
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -34,5 +34,5 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .single()
 
   if (error || !data) return notFound()
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }

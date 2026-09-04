@@ -4,7 +4,7 @@ export async function GET() {
   const user = await getAuthUser(); if (!user) return unauthorized()
   const { data, error } = await getAdminClient().from('organizations').select('id,name,slug,plan,status,settings').eq('id', user.organizationId).single()
   if (error || !data) return notFound()
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }
 export async function PATCH(req: NextRequest) {
   const user = await getAuthUser(); if (!user) return unauthorized()
@@ -15,5 +15,5 @@ export async function PATCH(req: NextRequest) {
     .update({ ...(body.name ? { name: body.name } : {}), settings: merged })
     .eq('id', user.organizationId).select('id,name,slug,plan,status,settings').single()
   if (error) return serverError(error)
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }

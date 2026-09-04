@@ -6,5 +6,5 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params; const body = await req.json()
   const { data, error } = await getAdminClient().from('users').update(body).eq('id', id).eq('organization_id', user.organizationId).select('*, user_profiles(first_name,last_name)').single()
   if (error) return serverError(error)
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }

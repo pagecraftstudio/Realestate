@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError } from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, camelize } from '@/lib/server/api-helpers'
 
 export async function PATCH(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthUser()
@@ -13,5 +13,5 @@ export async function PATCH(_req: NextRequest, { params }: { params: Promise<{ i
     .select('*').single()
 
   if (error) return serverError(error)
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }

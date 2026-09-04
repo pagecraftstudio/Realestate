@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse } from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize } from '@/lib/server/api-helpers'
 
 export async function GET(req: NextRequest) {
   const user = await getAuthUser()
@@ -36,5 +36,5 @@ export async function POST(req: NextRequest) {
     .insert({ ...body, organization_id: user.organizationId, agent_id: body.agentId ?? user.id })
     .select('*').single()
   if (error) return serverError(error)
-  return NextResponse.json(data, { status: 201 })
+  return NextResponse.json(camelize(data), { status: 201 })
 }

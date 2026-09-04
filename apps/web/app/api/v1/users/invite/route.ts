@@ -17,5 +17,5 @@ export async function POST(req: NextRequest) {
     data: { organization_id: user.organizationId, role: body.role },
   })
   const { data } = await admin.from('users').select('*, user_profiles(first_name,last_name,phone,avatar_url)').eq('id', newUser.id).single()
-  return NextResponse.json(data, { status: 201 })
+  return NextResponse.json(camelize(data), { status: 201 })
 }

@@ -6,5 +6,5 @@ export async function POST(req: NextRequest) {
   const { ids } = await req.json()
   const { data, error } = await getAdminClient().from('commissions').update({ status: 'APPROVED', approved_at: new Date().toISOString(), approved_by_id: user.id }).in('id', ids).eq('organization_id', user.organizationId).select('*')
   if (error) return serverError(error)
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }

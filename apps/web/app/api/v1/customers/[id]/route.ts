@@ -10,7 +10,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     .select('*, assigned_agent:users!customers_assigned_agent_id_fkey(id, user_profiles(first_name, last_name, avatar_url)), deals(*), viewings(*)')
     .eq('id', id).eq('organization_id', user.organizationId).single()
   if (error || !data) return notFound()
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -22,5 +22,5 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .from('customers').update(body).eq('id', id).eq('organization_id', user.organizationId)
     .select('*').single()
   if (error || !data) return notFound()
-  return NextResponse.json(data)
+  return NextResponse.json(camelize(data))
 }

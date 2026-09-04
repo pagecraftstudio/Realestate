@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse } from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize } from '@/lib/server/api-helpers'
 export async function GET(req: NextRequest) {
   const user = await getAuthUser(); if (!user) return unauthorized()
   const url = new URL(req.url); const { page, limit, from, to } = paginate(url); const p = url.searchParams
@@ -18,5 +18,5 @@ export async function POST(req: NextRequest) {
   const { data, error } = await getAdminClient().from('communications')
     .insert({ ...body, organization_id: user.organizationId, sender_id: user.id, sent_at: body.sentAt ?? new Date().toISOString() }).select('*').single()
   if (error) return serverError(error)
-  return NextResponse.json(data, { status: 201 })
+  return NextResponse.json(camelize(data), { status: 201 })
 }
