@@ -12,6 +12,22 @@ const SUPABASE_URL      = process.env['NEXT_PUBLIC_SUPABASE_URL']!
 const SUPABASE_ANON_KEY = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']!
 const SERVICE_ROLE_KEY  = process.env['SUPABASE_SERVICE_ROLE_KEY']!
 
+
+// ─── Snake to camelCase transformer ──────────────────────────────────────────
+function toCamel(s: string): string {
+  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+}
+
+export function camelize<T>(obj: unknown): T {
+  if (Array.isArray(obj)) return obj.map(camelize) as unknown as T
+  if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>).map(([k, v]) => [toCamel(k), camelize(v)])
+    ) as T
+  }
+  return obj as T
+}
+
 // ─── Admin client (service role — server only) ─────────────────────────────
 export function getAdminClient() {
   return createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
@@ -107,9 +123,9 @@ export function paginate(url: URL) {
   return { page, limit, from: (page - 1) * limit, to: (page - 1) * limit + limit - 1 }
 }
 
-export function paginatedResponse<T>(data: T[], total: number, page: number, limit: number) {
+export function paginatedResponse<T>(data: unknown[], total: number, page: number, limit: number) {
   return NextResponse.json({
-    data,
+    data: camelize<T[]>(data),
     meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
   })
 }
