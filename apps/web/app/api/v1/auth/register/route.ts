@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { randomUUID } from 'crypto'
 import { getAdminClient, conflict, serverError, badRequest } from '@/lib/server/api-helpers'
 import { z, ZodError } from 'zod'
 
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
 
     // Create org
     const { data: org, error: orgErr } = await admin.from('organizations').insert({
+      id:     randomUUID(),
       name:   input.orgName,
       slug:   input.orgSlug,
       plan:   'FREE',
