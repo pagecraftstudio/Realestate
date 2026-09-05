@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, notFound, camelize} from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, notFound, camelize, snakify} from '@/lib/server/api-helpers'
 export async function GET() {
   const user = await getAuthUser(); if (!user) return unauthorized()
   const { data, error } = await getAdminClient().from('organizations').select('id,name,slug,plan,status,settings').eq('id', user.organizationId).single()

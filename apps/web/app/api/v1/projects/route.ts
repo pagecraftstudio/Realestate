@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize } from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize, snakify } from '@/lib/server/api-helpers'
 import { randomUUID } from 'crypto'
 
 export async function GET(req: NextRequest) {
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   if (!user) return unauthorized()
   const body = await req.json()
   const { data, error } = await getAdminClient().from('projects')
-    .insert({ ...body, id: randomUUID(), organization_id: user.organizationId }).select('*').single()
+    .insert({ ...snakify<Record<string,unknown>>(body), id: randomUUID(), organization_id: user.organizationId }).select('*').single()
   if (error) return serverError(error)
   return NextResponse.json(camelize(data), { status: 201 })
 }

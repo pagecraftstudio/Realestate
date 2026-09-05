@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize } from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse, camelize, snakify } from '@/lib/server/api-helpers'
 
 export async function GET(req: NextRequest) {
   const user = await getAuthUser()
@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
   if (user.role === 'SALES_AGENT') query = query.eq('agent_id', user.id)
 
   const p = url.searchParams
-  if (p.get('status'))        query = query.eq('status', p.get('status')!)
+  const VALID_DEAL_STATUSES = ['DRAFT','RESERVED','CONTRACTED','PARTIALLY_PAID','COMPLETED','CANCELLED']
+  if (p.get('status') && VALID_DEAL_STATUSES.includes(p.get('status')!)) query = query.eq('status', p.get('status')!)
   if (p.get('pipelineStage')) query = query.eq('pipeline_stage', p.get('pipelineStage')!)
   if (p.get('agentId'))       query = query.eq('agent_id', p.get('agentId')!)
   if (p.get('customerId'))    query = query.eq('customer_id', p.get('customerId')!)
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
   if (!user) return unauthorized()
   const body = await req.json()
   const { data, error } = await getAdminClient().from('deals')
-    .insert({ ...body, organization_id: user.organizationId, agent_id: body.agentId ?? user.id })
+    .insert({ ...snakify<Record<string,unknown>>(body), organization_id: user.organizationId, agent_id: body.agentId ?? user.id })
     .select('*').single()
   if (error) return serverError(error)
   return NextResponse.json(camelize(data), { status: 201 })

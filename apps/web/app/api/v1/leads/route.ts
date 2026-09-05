@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse } from '@/lib/server/api-helpers'
+import { snakify, getAuthUser, getAdminClient, unauthorized, serverError, paginate, paginatedResponse } from '@/lib/server/api-helpers'
 
 export async function GET(req: NextRequest) {
   const user = await getAuthUser()
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await admin
     .from('leads')
-    .insert({ ...body, organization_id: user.organizationId, created_by_id: user.id })
+    .insert({ ...snakify<Record<string,unknown>>(body), organization_id: user.organizationId, created_by_id: user.id })
     .select('*')
     .single()
 

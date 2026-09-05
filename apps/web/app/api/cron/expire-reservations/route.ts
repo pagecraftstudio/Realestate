@@ -3,7 +3,7 @@
  * Schedule: "0 0 * * *" (midnight UTC)
  */
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/server/api-helpers'
+import { snakify, getAdminClient } from '@/lib/server/api-helpers'
 
 export async function GET(req: NextRequest) {
   const secret = process.env['CRON_SECRET']

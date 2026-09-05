@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
-import { getAdminClient, conflict, serverError, badRequest } from '@/lib/server/api-helpers'
+import { snakify, getAdminClient, conflict, serverError, badRequest } from '@/lib/server/api-helpers'
 import { z, ZodError } from 'zod'
 
 const RegisterSchema = z.object({

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, serverError, forbidden, hasRole, camelize} from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, serverError, forbidden, hasRole, camelize, snakify} from '@/lib/server/api-helpers'
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthUser(); if (!user) return unauthorized()
   if (!hasRole(user, 'COMPANY_ADMIN')) return forbidden()

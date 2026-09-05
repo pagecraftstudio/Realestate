@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, getAdminClient, unauthorized, notFound, serverError, camelize} from '@/lib/server/api-helpers'
+import { getAuthUser, getAdminClient, unauthorized, notFound, serverError, camelize, snakify} from '@/lib/server/api-helpers'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthUser()
@@ -18,7 +18,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params
   const body = await req.json()
   const { data, error } = await getAdminClient().from('projects')
-    .update(body).eq('id', id).eq('organization_id', user.organizationId).select('*').single()
+    .update(snakify<Record<string,unknown>>(body)).eq('id', id).eq('organization_id', user.organizationId).select('*').single()
   if (error || !data) return notFound()
   return NextResponse.json(camelize(data))
 }

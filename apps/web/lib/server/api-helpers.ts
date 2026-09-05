@@ -18,6 +18,20 @@ function toCamel(s: string): string {
   return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
 }
 
+
+export function snakify<T>(obj: unknown): T {
+  if (Array.isArray(obj)) return obj.map(snakify) as unknown as T
+  if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>).map(([k, v]) => [
+        k.replace(/([A-Z])/g, '_$1').toLowerCase(),
+        snakify(v),
+      ])
+    ) as T
+  }
+  return obj as T
+}
+
 export function camelize<T>(obj: unknown): T {
   if (Array.isArray(obj)) return obj.map(camelize) as unknown as T
   if (obj !== null && typeof obj === 'object') {
