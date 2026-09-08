@@ -11,7 +11,7 @@ import axios, { type AxiosError } from 'axios'
 import { createBrowserClient } from '@supabase/ssr'
 
 export const api = axios.create({
-  baseURL: typeof window !== 'undefined' ? '' : (process.env['NEXT_PUBLIC_API_URL'] ?? ''),
+  baseURL: typeof window !== 'undefined' ? '' : (process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'),
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })

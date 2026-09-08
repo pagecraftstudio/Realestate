@@ -16,7 +16,7 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      `connect-src 'self' ${process.env['NEXT_PUBLIC_SUPABASE_URL'] ?? ''} wss://*.supabase.co https://*.supabase.co ${process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000'}`,
+      `connect-src 'self' ${process.env['NEXT_PUBLIC_SUPABASE_URL'] ?? ''} wss://*.supabase.co https://*.supabase.co ${process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'}`,
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       `img-src 'self' data: blob: https://*.supabase.co`,
@@ -61,7 +61,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000'}/api/:path*`,
+        destination: `${process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'}/api/:path*`,
       },
     ]
   },
