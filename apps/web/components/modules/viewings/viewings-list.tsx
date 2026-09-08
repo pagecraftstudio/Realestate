@@ -155,6 +155,7 @@ export function ViewingsList({ defaultFilter = {} }: Props) {
           if (cancelId) { await cancel.mutateAsync(); setCancelId(null) }
         }}
         onCancel={() => setCancelId(null)}
+        onOpenChange={(v) => { if (!v) setCancelId(null) }}
       />
     </div>
   )

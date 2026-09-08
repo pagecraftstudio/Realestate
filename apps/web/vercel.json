@@ -4,11 +4,8 @@
   "framework": "nextjs",
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "rewrites": [
-    {
-      "source": "/api/v1/:path*",
-      "destination": "https://recrm-api.vercel.app/api/v1/:path*"
-    }
+  "crons": [
+    { "path": "/api/cron/expire-reservations", "schedule": "0 0 * * *" }
   ],
   "headers": [
     {

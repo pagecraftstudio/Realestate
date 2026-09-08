@@ -122,6 +122,7 @@ export function ReservationsList() {
         loading={cancel.isPending}
         onConfirm={async () => { if (cancelId) { await cancel.mutateAsync(undefined); setCancelId(null) } }}
         onCancel={() => setCancelId(null)}
+        onOpenChange={(v) => { if (!v) setCancelId(null) }}
       />
     </div>
   )

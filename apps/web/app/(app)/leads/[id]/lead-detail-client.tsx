@@ -159,11 +159,11 @@ export function LeadDetailClient({ id }: { id: string }) {
           </div>
 
           {/* Tags */}
-          {lead.tags.length > 0 && (
+          {(lead.tags ?? []).length > 0 && (
             <div className="rounded-lg border border-border bg-card p-4">
               <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Tags</p>
               <div className="flex flex-wrap gap-1.5">
-                {lead.tags.map((tag) => (
+                {(lead.tags ?? []).map((tag) => (
                   <span key={tag} className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                     {tag}
                   </span>

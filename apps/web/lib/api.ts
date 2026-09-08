@@ -11,7 +11,7 @@ import axios, { type AxiosError } from 'axios'
 import { createBrowserClient } from '@supabase/ssr'
 
 export const api = axios.create({
-  baseURL: process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000',
+  baseURL: typeof window !== 'undefined' ? '' : (process.env['NEXT_PUBLIC_API_URL'] ?? ''),
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })

@@ -59,10 +59,10 @@ export function PipelineBoard({ deals }: Props) {
             onDrop={(e) => {
               e.preventDefault()
               setOverStage(null)
-              if (dragId.current && dragId.current !== stage.key) {
-                const deal = deals.find((d) => d.id === dragging)
+              if (dragId.current) {
+                const deal = deals.find((d) => d.id === dragId.current)
                 if (deal && deal.pipelineStage !== stage.key) {
-                  moveDeal.mutate({ id: dragging!, pipelineStage: stage.key })
+                  moveDeal.mutate({ id: dragId.current, pipelineStage: stage.key })
                 }
               }
             }}

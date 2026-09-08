@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Bell, Moon, Sun, LogOut, User, ChevronRight } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -60,9 +61,9 @@ export function Topbar() {
           <span key={crumb.href} className="flex items-center gap-1">
             {!crumb.last ? (
               <>
-                <a href={crumb.href} className="hover:text-foreground transition-colors">
+                <Link href={crumb.href} className="hover:text-foreground transition-colors">
                   {crumb.label}
-                </a>
+                </Link>
                 <ChevronRight size={13} className="text-muted-foreground/40" />
               </>
             ) : (
