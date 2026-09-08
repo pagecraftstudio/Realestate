@@ -2,18 +2,30 @@
   "version": 2,
   "name": "recrm-web",
   "framework": "nextjs",
-  "buildCommand": "pnpm build",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm --filter api run vercel-build && pnpm --filter web run build",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "crons": [
-    { "path": "/api/cron/expire-reservations", "schedule": "0 0 * * *" }
+    {
+      "path": "/api/cron/expire-reservations",
+      "schedule": "0 0 * * *"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options",        "value": "SAMEORIGIN" },
-        { "key": "X-DNS-Prefetch-Control", "value": "on" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-DNS-Prefetch-Control",
+          "value": "on"
+        }
       ]
     }
   ]

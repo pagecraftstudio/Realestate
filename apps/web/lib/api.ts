@@ -11,7 +11,7 @@ import axios, { type AxiosError } from 'axios'
 import { getSupabaseBrowserClient } from './supabase/client'
 
 export const api = axios.create({
-  baseURL: typeof window !== 'undefined' ? '' : (process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'),
+  baseURL: '',  // API runs in same Next.js deployment — always same origin
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })

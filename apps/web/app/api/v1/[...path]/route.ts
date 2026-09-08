@@ -1,57 +1,75 @@
 /**
- * Catch-all proxy to Fastify API.
- * Next.js rewrites strip Authorization headers for external destinations,
- * so we use a Next.js API route to explicitly forward all headers.
+ * Catch-all route — serves the Fastify API directly inside Next.js.
+ * No external API project needed. The `api` workspace package is imported
+ * and its Fastify app is invoked via inject(), reusing a singleton instance.
  */
 
 import { type NextRequest, NextResponse } from 'next/server'
+import type { FastifyInstance } from 'fastify'
 
-const API_BASE = process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'
+// Lazy singleton — reused across warm Vercel invocations
+let _app: FastifyInstance | null = null
 
-async function proxy(req: NextRequest, { params }: { params: { path: string[] } }) {
-  const path    = params.path.join('/')
-  const search  = req.nextUrl.search
-  const url     = `${API_BASE}/api/v1/${path}${search}`
+async function getApp(): Promise<FastifyInstance> {
+  if (_app) return _app
+  // Dynamic import avoids pulling Fastify into Next.js client bundles
+  const { buildApp } = await import('api/src/main')
+  _app = await buildApp()
+  await _app.ready()
+  return _app
+}
 
-  // Forward all headers except host
-  // Explicitly set Authorization first to guarantee it's included
-  const headers = new Headers()
-  const auth = req.headers.get('authorization')
-  if (auth) headers.set('authorization', auth)
-  req.headers.forEach((value, key) => {
-    if (key.toLowerCase() !== 'host') headers.set(key, value)
-  })
-  console.log('[proxy] →', req.method, url, 'auth:', auth ? auth.slice(0, 30) + '...' : 'NONE')
+async function handler(req: NextRequest, ctx: { params: { path: string[] } }) {
+  const app = await getApp()
 
-  let body: BodyInit | undefined
+  const path   = (await ctx.params).path.join('/')
+  const search = req.nextUrl.search
+  const url    = `/api/v1/${path}${search}`
+
+  // Read body once
+  let body: string | Buffer | undefined
   if (!['GET', 'HEAD'].includes(req.method)) {
-    body = await req.arrayBuffer()
+    const ct = req.headers.get('content-type') ?? ''
+    if (ct.includes('multipart/form-data')) {
+      body = Buffer.from(await req.arrayBuffer())
+    } else {
+      body = await req.text()
+    }
   }
 
-  const res = await fetch(url, {
-    method:  req.method,
+  // Build headers object for Fastify inject
+  const headers: Record<string, string> = {}
+  req.headers.forEach((value, key) => {
+    if (key.toLowerCase() !== 'host') headers[key] = value
+  })
+
+  const result = await app.inject({
+    method:  req.method as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS',
+    url,
     headers,
-    body,
-    // Don't follow redirects — forward them as-is
-    redirect: 'manual',
+    payload: body,
   })
 
   const resHeaders = new Headers()
-  res.headers.forEach((value, key) => {
-    // Strip headers that conflict with Next.js response handling
-    const skip = ['transfer-encoding', 'connection', 'keep-alive', 'upgrade']
-    if (!skip.includes(key.toLowerCase())) resHeaders.set(key, value)
+  Object.entries(result.headers).forEach(([key, value]) => {
+    const skip = ['transfer-encoding', 'connection', 'keep-alive']
+    if (!skip.includes(key.toLowerCase()) && value != null) {
+      resHeaders.set(key, String(value))
+    }
   })
 
-  return new NextResponse(res.body, {
-    status:  res.status,
+  return new NextResponse(result.rawPayload, {
+    status:  result.statusCode,
     headers: resHeaders,
   })
 }
 
-export const GET     = proxy
-export const POST    = proxy
-export const PUT     = proxy
-export const PATCH   = proxy
-export const DELETE  = proxy
-export const OPTIONS = proxy
+export const GET     = handler
+export const POST    = handler
+export const PUT     = handler
+export const PATCH   = handler
+export const DELETE  = handler
+export const OPTIONS = handler
+
+export const dynamic    = 'force-dynamic'
+export const runtime    = 'nodejs'

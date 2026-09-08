@@ -16,7 +16,7 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      `connect-src 'self' ${process.env['NEXT_PUBLIC_SUPABASE_URL'] ?? ''} wss://*.supabase.co https://*.supabase.co ${process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'}`,
+      `connect-src 'self' ${process.env['NEXT_PUBLIC_SUPABASE_URL'] ?? ''} wss://*.supabase.co https://*.supabase.co`,
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       `img-src 'self' data: blob: https://*.supabase.co`,
@@ -32,6 +32,29 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  // Allow Next.js to bundle the api workspace package
+  transpilePackages: ['api'],
+
+  // Fastify and its deps must stay as Node.js modules (not bundled by webpack)
+  serverExternalPackages: [
+    'fastify',
+    '@fastify/cors',
+    '@fastify/cookie',
+    '@fastify/helmet',
+    '@fastify/jwt',
+    '@fastify/multipart',
+    '@fastify/swagger',
+    '@fastify/swagger-ui',
+    'fastify-raw-body',
+    '@prisma/client',
+    'prisma',
+    'bcryptjs',
+    'nanoid',
+    '@supabase/supabase-js',
+    '@supabase/ssr',
+    'zod',
+  ],
 
   images: {
     remotePatterns: [
