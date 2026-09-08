@@ -68,7 +68,10 @@ export const supabaseAdmin = new Proxy({} as SupabaseClient, {
  */
 export async function verifySupabaseToken(accessToken: string) {
   const { data, error } = await getSupabaseAdmin().auth.getUser(accessToken)
-  if (error || !data.user) return null
+  if (error || !data.user) {
+    console.error('[verifySupabaseToken] failed:', error?.message ?? 'no user', { status: error?.status })
+    return null
+  }
   return data.user
 }
 

@@ -21,6 +21,7 @@ export async function authenticate(
     }
 
     const accessToken = authHeader.slice(7)
+    console.log('[authenticate] token prefix:', accessToken.slice(0, 20), 'len:', accessToken.length)
 
     const supabaseUser = await verifySupabaseToken(accessToken)
     if (!supabaseUser) {
