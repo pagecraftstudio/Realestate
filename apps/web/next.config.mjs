@@ -33,27 +33,28 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
 
-  // Keep the entire api package and Fastify stack as external Node.js modules.
-  // The api is pre-compiled to dist/ before next build runs.
-  serverExternalPackages: [
-    'api',
-    'fastify',
-    '@fastify/cors',
-    '@fastify/cookie',
-    '@fastify/helmet',
-    '@fastify/jwt',
-    '@fastify/multipart',
-    '@fastify/swagger',
-    '@fastify/swagger-ui',
-    'fastify-raw-body',
-    '@prisma/client',
-    'prisma',
-    'bcryptjs',
-    'nanoid',
-    '@supabase/supabase-js',
-    '@supabase/ssr',
-    'zod',
-  ],
+  experimental: {
+    // Next 14: keep Fastify/Prisma/api as external Node.js modules (not bundled by webpack)
+    serverComponentsExternalPackages: [
+      'api',
+      'fastify',
+      '@fastify/cors',
+      '@fastify/cookie',
+      '@fastify/helmet',
+      '@fastify/jwt',
+      '@fastify/multipart',
+      '@fastify/swagger',
+      '@fastify/swagger-ui',
+      'fastify-raw-body',
+      '@prisma/client',
+      'prisma',
+      'bcryptjs',
+      'nanoid',
+      '@supabase/supabase-js',
+      '@supabase/ssr',
+      'zod',
+    ],
+  },
 
   images: {
     remotePatterns: [

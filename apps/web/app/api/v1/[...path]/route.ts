@@ -76,7 +76,7 @@ async function handler(req: NextRequest, ctx: { params: Promise<{ path: string[]
     }
   })
 
-  return new NextResponse(result.rawPayload, {
+  return new NextResponse(result.rawPayload as unknown as BodyInit, {
     status:  result.statusCode,
     headers: resHeaders,
   })
