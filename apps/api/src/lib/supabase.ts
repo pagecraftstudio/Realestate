@@ -67,6 +67,25 @@ export const supabaseAdmin = new Proxy({} as SupabaseClient, {
  * Used in the authenticate middleware to replace @fastify/jwt verification.
  */
 export async function verifySupabaseToken(accessToken: string) {
+  // Decode JWT payload to log the issuer for debugging project mismatches
+  try {
+    const parts   = accessToken.split('.')
+    const payload = JSON.parse(Buffer.from(parts[1] ?? '', 'base64url').toString('utf8'))
+    const iss     = payload?.iss as string | undefined
+    const sub     = payload?.sub as string | undefined
+    const exp     = payload?.exp as number | undefined
+    const expired = exp ? exp < Math.floor(Date.now() / 1000) : false
+    const configUrl = process.env['SUPABASE_URL'] ?? ''
+    console.log('[verifySupabaseToken] iss:', iss, 'sub:', sub?.slice(0, 8), 'expired:', expired, 'configUrl:', configUrl)
+    if (expired) {
+      console.error('[verifySupabaseToken] token is expired')
+      return null
+    }
+    if (iss && configUrl && !iss.includes(configUrl.replace('https://', '').split('.')[0] ?? '')) {
+      console.error('[verifySupabaseToken] PROJECT MISMATCH — token issuer:', iss, 'API Supabase URL:', configUrl)
+    }
+  } catch { /* ignore decode errors */ }
+
   const { data, error } = await getSupabaseAdmin().auth.getUser(accessToken)
   if (error || !data.user) {
     console.error('[verifySupabaseToken] failed:', error?.message ?? 'no user', { status: error?.status })

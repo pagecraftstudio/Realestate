@@ -3,6 +3,7 @@ import { verifySupabaseToken } from '../lib/supabase.js'
 import { prisma } from '../lib/prisma.js'
 import type { AuthUser } from '../types/auth.js'
 import type { UserRole } from '@prisma/client'
+import { nanoid } from 'nanoid'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -41,6 +42,49 @@ export async function authenticate(
     })
 
     if (!appUser) {
+      // ── Auto-recovery: public.users row missing (DB trigger failed during registration)
+      // Reconstruct from Supabase user metadata and create the missing row.
+      const meta = (supabaseUser.user_metadata ?? {}) as Record<string, unknown>
+      const orgId = meta['organization_id'] as string | undefined
+
+      if (orgId && supabaseUser.email) {
+        try {
+          const org = await prisma.organization.findUnique({ where: { id: orgId }, select: { id: true } })
+          if (org) {
+            const userId = nanoid()
+            const created = await prisma.user.create({
+              data: {
+                id:             userId,
+                authUserId:     supabaseUser.id,
+                organizationId: orgId,
+                email:          supabaseUser.email,
+                role:           (meta['role'] as UserRole) ?? 'COMPANY_ADMIN',
+                status:         'ACTIVE',
+                emailVerified:  true,
+              },
+              select: { id: true, organizationId: true, role: true },
+            })
+            // Create profile if we have name data
+            const firstName = meta['first_name'] as string | undefined
+            const lastName  = meta['last_name']  as string | undefined
+            if (firstName) {
+              await prisma.userProfile.create({
+                data: { id: nanoid(), userId, firstName, lastName: lastName ?? '' },
+              }).catch(() => {/* non-critical */})
+            }
+            console.log('[authenticate] auto-recovered missing user row for', supabaseUser.email)
+            request.authUser = {
+              id: created.id, userId: created.id,
+              organizationId: created.organizationId,
+              role: created.role as UserRole,
+              supabaseUid: supabaseUser.id,
+            }
+            return
+          }
+        } catch (recoverErr) {
+          console.error('[authenticate] auto-recovery failed:', recoverErr)
+        }
+      }
       return reply.status(401).send({ error: 'User account not found or inactive' })
     }
 
