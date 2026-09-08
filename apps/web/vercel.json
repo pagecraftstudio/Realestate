@@ -2,7 +2,7 @@
   "version": 2,
   "name": "recrm-web",
   "framework": "nextjs",
-  "buildCommand": "cd ../.. && pnpm --filter api run vercel-build && pnpm --filter web run build",
+  "buildCommand": "cd ../.. && pnpm --filter api exec prisma generate && pnpm --filter api run build && pnpm --filter web run build",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "crons": [
     {
@@ -28,5 +28,6 @@
         }
       ]
     }
-  ]
+  ],
+  "outputDirectory": ".next"
 }

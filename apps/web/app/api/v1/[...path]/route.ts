@@ -1,33 +1,51 @@
 /**
  * Catch-all route — serves the Fastify API directly inside Next.js.
- * No external API project needed. The `api` workspace package is imported
- * and its Fastify app is invoked via inject(), reusing a singleton instance.
+ *
+ * The api workspace package is compiled to dist/ before Next.js builds.
+ * We import the compiled JS so Next.js webpack never tries to parse
+ * Fastify's .js-suffixed ESM-style imports from TypeScript source.
+ *
+ * Build order (apps/web/vercel.json buildCommand):
+ *   1. prisma generate
+ *   2. tsc (api → dist/)
+ *   3. next build (web)
  */
 
 import { type NextRequest, NextResponse } from 'next/server'
 import type { FastifyInstance } from 'fastify'
 
-// Lazy singleton — reused across warm Vercel invocations
+// Singleton reused across warm invocations
 let _app: FastifyInstance | null = null
 
 async function getApp(): Promise<FastifyInstance> {
   if (_app) return _app
-  // Dynamic import avoids pulling Fastify into Next.js client bundles
-  const { buildApp } = await import('api/src/main')
+
+  // Import compiled dist — avoids webpack trying to parse .js-suffixed TS imports
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { buildApp } = require('api') as { buildApp: () => Promise<FastifyInstance> }
   _app = await buildApp()
   await _app.ready()
   return _app
 }
 
-async function handler(req: NextRequest, ctx: { params: { path: string[] } }) {
-  const app = await getApp()
+async function handler(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
+  let app: FastifyInstance
+  try {
+    app = await getApp()
+  } catch (err) {
+    console.error('[api route] getApp failed:', err)
+    return NextResponse.json(
+      { error: 'API initialization failed', detail: String(err) },
+      { status: 500 }
+    )
+  }
 
-  const path   = (await ctx.params).path.join('/')
+  const { path } = await ctx.params
   const search = req.nextUrl.search
-  const url    = `/api/v1/${path}${search}`
+  const url = `/api/v1/${path.join('/')}${search}`
 
-  // Read body once
-  let body: string | Buffer | undefined
+  // Read body
+  let body: Buffer | string | undefined
   if (!['GET', 'HEAD'].includes(req.method)) {
     const ct = req.headers.get('content-type') ?? ''
     if (ct.includes('multipart/form-data')) {
@@ -37,7 +55,7 @@ async function handler(req: NextRequest, ctx: { params: { path: string[] } }) {
     }
   }
 
-  // Build headers object for Fastify inject
+  // Forward headers
   const headers: Record<string, string> = {}
   req.headers.forEach((value, key) => {
     if (key.toLowerCase() !== 'host') headers[key] = value
@@ -71,5 +89,5 @@ export const PATCH   = handler
 export const DELETE  = handler
 export const OPTIONS = handler
 
-export const dynamic    = 'force-dynamic'
-export const runtime    = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'

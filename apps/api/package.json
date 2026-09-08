@@ -51,12 +51,7 @@
   "exports": {
     ".": {
       "require": "./dist/src/main.js",
-      "import": "./dist/src/main.js"
-    },
-    "./src/main": {
-      "require": "./dist/src/main.js",
-      "import": "./dist/src/main.js"
-    },
-    "./src/*": "./src/*.ts"
+      "default": "./dist/src/main.js"
+    }
   }
 }

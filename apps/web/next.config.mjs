@@ -33,11 +33,10 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
 
-  // Allow Next.js to bundle the api workspace package
-  transpilePackages: ['api'],
-
-  // Fastify and its deps must stay as Node.js modules (not bundled by webpack)
+  // Keep the entire api package and Fastify stack as external Node.js modules.
+  // The api is pre-compiled to dist/ before next build runs.
   serverExternalPackages: [
+    'api',
     'fastify',
     '@fastify/cors',
     '@fastify/cookie',
