@@ -57,15 +57,6 @@ const nextConfig = {
     ]
   },
 
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'}/api/:path*`,
-      },
-    ]
-  },
-
   productionBrowserSourceMaps: false,
 }
 
