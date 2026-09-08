@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "name": "recrm-api",
+  "buildCommand": "pnpm vercel-build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 30
+    },
+    "api/cron/expire-reservations.ts": {
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/expire-reservations",
+      "schedule": "0 0 * * *"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "installCommand": "pnpm install --frozen-lockfile && pnpm --filter api exec prisma generate"
+}

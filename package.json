@@ -1,0 +1,35 @@
+{
+  "name": "recrm",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:api": "pnpm --filter api dev",
+    "dev:web": "pnpm --filter web dev",
+    "build:api": "pnpm --filter api build",
+    "build:web": "pnpm --filter web build",
+    "db:generate": "pnpm --filter api db:generate",
+    "db:migrate": "pnpm --filter api db:migrate",
+    "db:seed": "pnpm --filter api db:seed",
+    "migrate:supabase": "tsx scripts/migrate-to-supabase.ts",
+    "test": "pnpm test:unit && pnpm test:integration",
+    "test:unit": "pnpm --filter api exec vitest run",
+    "test:unit:watch": "pnpm --filter api exec vitest",
+    "test:security": "vitest run --config vitest.integration.config.ts tests/security/security.test.ts",
+    "test:regression": "vitest run --config vitest.integration.config.ts tests/regression/regression.test.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.15.7",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

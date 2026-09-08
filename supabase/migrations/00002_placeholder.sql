@@ -1,0 +1,14 @@
+-- Migration: 00002_placeholder
+-- Created: to document the intentional gap between 00001 and 00003.
+--
+-- This migration is intentionally empty.
+--
+-- HISTORY:
+--   00001_initial_schema.sql  — full schema creation
+--   00002 (this file)         — originally a seed/demo-data migration that was
+--                               dropped because seeding is handled by prisma/seed.ts
+--                               in development and never runs in production.
+--   00003_indexes.sql         — performance indexes added on top of 00001
+--
+-- No schema changes are needed here.
+-- This file exists solely to prevent confusion about a missing migration.
