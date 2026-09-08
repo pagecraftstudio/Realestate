@@ -112,7 +112,7 @@ export async function createCampaign(actor: AuthUser, data: CreateCampaignInput)
       startDate:      data.startDate ? new Date(data.startDate) : undefined,
       endDate:        data.endDate   ? new Date(data.endDate)   : undefined,
       isActive:       data.isActive,
-      metadata:       data.metadata,
+      metadata:       data.metadata as import('@prisma/client').Prisma.InputJsonValue | undefined,
     },
     select: campaignSelect(),
   })
@@ -136,7 +136,7 @@ export async function updateCampaign(actor: AuthUser, id: string, data: UpdateCa
       ...(data.startDate   !== undefined ? { startDate: new Date(data.startDate) } : {}),
       ...(data.endDate     !== undefined ? { endDate: new Date(data.endDate) } : {}),
       ...(data.isActive    !== undefined ? { isActive: data.isActive }         : {}),
-      ...(data.metadata    !== undefined ? { metadata: data.metadata }         : {}),
+      ...(data.metadata    !== undefined ? { metadata: data.metadata as import('@prisma/client').Prisma.InputJsonValue } : {}),
     },
     select: campaignSelect(),
   })
