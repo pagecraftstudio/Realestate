@@ -36,6 +36,15 @@ import { prisma } from './lib/prisma.js'
 // ─── Build app ────────────────────────────────────────────────────────────────
 
 export async function buildApp() {
+  // Run env validation in serverless context too (not just start())
+  if (process.env['NODE_ENV'] === 'production') {
+    const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'DATABASE_URL']
+    const missing = required.filter((k) => !process.env[k])
+    if (missing.length) {
+      throw new Error(`[startup] Missing required env vars: ${missing.join(', ')}`)
+    }
+  }
+
   const isDev = process.env['NODE_ENV'] === 'development'
   const fastify = Fastify({
     logger: isDev
@@ -91,7 +100,7 @@ export async function buildApp() {
 
   // ─── JWT ────────────────────────────────────────────────────────────────
   await fastify.register(fastifyJwt, {
-    secret: process.env['JWT_SECRET'] ?? 'dev-jwt-secret-change-in-prod',
+    secret: process.env['JWT_SECRET'] ?? process.env['SUPABASE_JWT_SECRET'] ?? 'dev-jwt-secret-change-in-prod',
     cookie: { cookieName: 'refreshToken', signed: false },
   })
 
@@ -232,16 +241,16 @@ function validateEnv() {
     console.warn('[startup] UPSTASH_REDIS_REST_URL/TOKEN not set — rate limiting disabled')
   }
 
-  const insecureDefaults: [string, string][] = [
-    ['COOKIE_SECRET', 'dev-cookie-secret-change-in-prod'],
-    ['JWT_SECRET',    'dev-jwt-secret-change-in-prod'],
-  ]
   if (process.env['NODE_ENV'] === 'production') {
-    for (const [key, defaultVal] of insecureDefaults) {
-      if (!process.env[key] || process.env[key] === defaultVal) {
-        console.error(`[startup] ${key} must be set to a secure value in production`)
-        process.exit(1)
-      }
+    if (!process.env['COOKIE_SECRET'] || process.env['COOKIE_SECRET'] === 'dev-cookie-secret-change-in-prod') {
+      console.error('[startup] COOKIE_SECRET must be set to a secure value in production')
+      process.exit(1)
+    }
+    // JWT_SECRET: falls back to SUPABASE_JWT_SECRET — both are acceptable
+    const jwtSecret = process.env['JWT_SECRET'] ?? process.env['SUPABASE_JWT_SECRET']
+    if (!jwtSecret) {
+      console.error('[startup] JWT_SECRET or SUPABASE_JWT_SECRET must be set in production')
+      process.exit(1)
     }
   }
 }
