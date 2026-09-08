@@ -14,10 +14,14 @@ async function proxy(req: NextRequest, { params }: { params: { path: string[] } 
   const url     = `${API_BASE}/api/v1/${path}${search}`
 
   // Forward all headers except host
+  // Explicitly set Authorization first to guarantee it's included
   const headers = new Headers()
+  const auth = req.headers.get('authorization')
+  if (auth) headers.set('authorization', auth)
   req.headers.forEach((value, key) => {
     if (key.toLowerCase() !== 'host') headers.set(key, value)
   })
+  console.log('[proxy] →', req.method, url, 'auth:', auth ? auth.slice(0, 30) + '...' : 'NONE')
 
   let body: BodyInit | undefined
   if (!['GET', 'HEAD'].includes(req.method)) {
