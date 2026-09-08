@@ -402,7 +402,7 @@ export function PropertyMatchingClient() {
           page={meta.page}
           pages={meta.pages}
           total={meta.total}
-          onPageChange={(p) => setFilter(f => ({ ...f, page: p }))}
+          onChange={(p) => setFilter(f => ({ ...f, page: p }))}
         />
       )}
     </div>
