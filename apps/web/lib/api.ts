@@ -8,7 +8,7 @@
  * On refresh failure: sign out + redirect to /login.
  */
 import axios, { type AxiosError } from 'axios'
-import { createBrowserClient } from '@supabase/ssr'
+import { getSupabaseBrowserClient } from './supabase/client'
 
 export const api = axios.create({
   baseURL: typeof window !== 'undefined' ? '' : (process.env['NEXT_PUBLIC_API_URL'] ?? 'https://realestate-api-one.vercel.app'),
@@ -19,16 +19,14 @@ export const api = axios.create({
 // ─── Helper: get Supabase browser client lazily ────────────────────────────────
 
 function getSupabase() {
-  return createBrowserClient(
-    process.env['NEXT_PUBLIC_SUPABASE_URL']!,
-    process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']!,
-  )
+  return getSupabaseBrowserClient()
 }
 
 // ─── Request: attach Supabase access token ────────────────────────────────────
 
 api.interceptors.request.use(async (config) => {
   if (typeof window === 'undefined') return config  // skip in SSR context
+  if (config.headers['Authorization']) return config  // already set explicitly
 
   const supabase = getSupabase()
   const { data: { session } } = await supabase.auth.getSession()

@@ -6,18 +6,16 @@
  */
 import { createBrowserClient } from '@supabase/ssr'
 
-const SUPABASE_URL      = process.env['NEXT_PUBLIC_SUPABASE_URL']!
-const SUPABASE_ANON_KEY = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']!
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error(
-    'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
-    'Check apps/web/.env.example.',
-  )
-}
-
 export function createSupabaseBrowserClient() {
-  return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const url     = process.env['NEXT_PUBLIC_SUPABASE_URL']
+  const anonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
+  if (!url || !anonKey) {
+    throw new Error(
+      'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
+      'Check apps/web/.env.example.',
+    )
+  }
+  return createBrowserClient(url, anonKey)
 }
 
 // Singleton for client-side use

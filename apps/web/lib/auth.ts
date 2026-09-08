@@ -54,9 +54,19 @@ export async function login(input: LoginInput): Promise<AuthUser> {
     throw new Error(error?.message ?? 'Login failed')
   }
 
-  // Fetch app user profile from Fastify
-  const { data: me } = await api.get<AuthUser>('/api/v1/auth/me')
-  return me
+  // Fetch app user profile from Fastify — pass token explicitly so the
+  // interceptor doesn't race against the Supabase cookie being written
+  try {
+    const { data: me } = await api.get<AuthUser>('/api/v1/auth/me', {
+      headers: { Authorization: `Bearer ${data.session.access_token}` },
+    })
+    return me
+  } catch (meErr: unknown) {
+    // Sign out the Supabase session so the login page isn't stuck
+    await supabase.auth.signOut().catch(() => {})
+    const msg = (meErr as { response?: { data?: { error?: string } } })?.response?.data?.error
+    throw new Error(msg ?? 'Account not found. Please contact your administrator.')
+  }
 }
 
 // ─── Register org ─────────────────────────────────────────────────────────────
